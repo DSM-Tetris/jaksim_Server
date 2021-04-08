@@ -9,7 +9,7 @@ import {
 import { UserRepository, TokenRepository } from "../repository";
 import { UserInputError } from "apollo-server";
 import { PasswordService } from "./password";
-import { JwtGenerator, JwtPayload } from "../util/jwtGenerator";
+import { JwtGenerator, JwtPayload, JwtValidator } from "../util";
 import { RefreshRequest } from "../dto/request/refresh";
 import {
   InvalidAccessToken,
@@ -17,7 +17,6 @@ import {
   Refresh,
   RefreshResult,
 } from "../dto/response/refresh";
-import { JwtValidator } from "../util/jwtValidator";
 
 export class UserService {
   static async signup(data: SignupRequest): Promise<void> {
@@ -69,16 +68,19 @@ export class UserService {
     if (!decodedAccessToken) {
       return new InvalidAccessToken();
     }
+
     const storedRefreshToken = await TokenRepository.findByUsername(
       (decodedAccessToken as JwtPayload).username
     );
     if (storedRefreshToken !== refreshToken) {
       return new InvalidRefreshToken();
     }
+
     const decodedRefreshToken = JwtValidator.verify(refreshToken);
     if (!decodedRefreshToken) {
       return new InvalidRefreshToken();
     }
+
     const regeneratedAccessToken = JwtGenerator.accessToken(
       decodedAccessToken as JwtPayload
     );

@@ -9,6 +9,8 @@ import {
   SendEmailRequest,
 } from "../dto";
 import { UserService, EmailService } from "../service";
+import { RefreshResult } from "../dto/response/refresh";
+import { RefreshRequest } from "../dto/request/refresh";
 
 @Resolver(User)
 export class UserResolver {
@@ -38,5 +40,12 @@ export class UserResolver {
   @Mutation(() => LoginResult)
   async login(@Arg("data") data: LoginRequest): Promise<typeof LoginResult> {
     return await UserService.login(data);
+  }
+
+  @Mutation(() => RefreshResult)
+  async regenerateAccessToken(
+    @Arg("data") data: RefreshRequest
+  ): Promise<typeof RefreshResult> {
+    return await UserService.regenerateAccessToken(data);
   }
 }

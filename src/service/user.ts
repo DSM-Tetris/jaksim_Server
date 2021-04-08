@@ -9,7 +9,15 @@ import {
 import { UserRepository, TokenRepository } from "../repository";
 import { UserInputError } from "apollo-server";
 import { PasswordService } from "./password";
-import { JwtGenerator } from "../util/jwtGenerator";
+import { JwtGenerator, JwtPayload } from "../util/jwtGenerator";
+import { RefreshRequest } from "../dto/request/refresh";
+import {
+  InvalidAccessToken,
+  InvalidRefreshToken,
+  Refresh,
+  RefreshResult,
+} from "../dto/response/refresh";
+import { JwtValidator } from "../util/jwtValidator";
 
 export class UserService {
   static async signup(data: SignupRequest): Promise<void> {
@@ -51,5 +59,29 @@ export class UserService {
     await TokenRepository.saveRefreshToken(username, refreshToken);
 
     return new Login(accessToken, refreshToken);
+  }
+
+  static async regenerateAccessToken({
+    accessToken,
+    refreshToken,
+  }: RefreshRequest): Promise<typeof RefreshResult> {
+    const decodedAccessToken = JwtValidator.decode(accessToken);
+    if (!decodedAccessToken) {
+      return new InvalidAccessToken();
+    }
+    const storedRefreshToken = await TokenRepository.findByUsername(
+      (decodedAccessToken as JwtPayload).username
+    );
+    if (storedRefreshToken !== refreshToken) {
+      return new InvalidRefreshToken();
+    }
+    const decodedRefreshToken = JwtValidator.verify(refreshToken);
+    if (!decodedRefreshToken) {
+      return new InvalidRefreshToken();
+    }
+    const regeneratedAccessToken = JwtGenerator.accessToken(
+      decodedAccessToken as JwtPayload
+    );
+    return new Refresh(regeneratedAccessToken);
   }
 }

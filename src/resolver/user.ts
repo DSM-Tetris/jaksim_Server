@@ -9,8 +9,7 @@ import {
   SendEmailRequest,
 } from "../dto";
 import { UserService, EmailService } from "../service";
-import { RefreshResult } from "../dto/response/refresh";
-import { RefreshRequest } from "../dto/request/refresh";
+import { RefreshResult, RefreshRequest } from "../dto";
 
 @Resolver(User)
 export class UserResolver {

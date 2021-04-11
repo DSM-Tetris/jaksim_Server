@@ -10,13 +10,13 @@ import { UserRepository, TokenRepository } from "../repository";
 import { UserInputError } from "apollo-server";
 import { PasswordService } from "./password";
 import { JwtGenerator, JwtPayload, JwtValidator } from "../util";
-import { RefreshRequest } from "../dto/request/refresh";
 import {
   InvalidAccessToken,
   InvalidRefreshToken,
   Refresh,
+  RefreshRequest,
   RefreshResult,
-} from "../dto/response/refresh";
+} from "../dto";
 
 export class UserService {
   static async signup(data: SignupRequest): Promise<void> {

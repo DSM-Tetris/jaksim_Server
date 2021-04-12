@@ -1,22 +1,22 @@
 import {
-  LoginRequest,
-  SignupRequest,
-  UserResponse,
-  LoginResult,
-  InvalidLoginInfo,
-  Login,
-} from "../dto";
-import { UserRepository, TokenRepository } from "../repository";
-import { UserInputError } from "apollo-server";
-import { PasswordService } from "./password";
-import { JwtGenerator, JwtPayload, JwtValidator } from "../util";
-import {
   InvalidAccessToken,
+  InvalidLoginInfo,
   InvalidRefreshToken,
+  Login,
+  LoginRequest,
+  LoginResult,
   Refresh,
   RefreshRequest,
   RefreshResult,
+  SignupRequest,
+  UserResponse,
 } from "../dto";
+import { TokenRepository, UserRepository } from "../repository";
+import { UserInputError } from "apollo-server";
+import { PasswordService } from "./password";
+import { JwtGenerator, JwtPayload, JwtValidator } from "../util";
+import { LogRepository } from "../repository/log";
+import { Log } from "../entity";
 
 export class UserService {
   static async signup(data: SignupRequest): Promise<void> {
@@ -56,6 +56,9 @@ export class UserService {
     const accessToken = JwtGenerator.accessToken({ username });
     const refreshToken = JwtGenerator.refreshToken();
     await TokenRepository.saveRefreshToken(username, refreshToken);
+
+    const log = Log.createLoginLog(user);
+    await LogRepository.save(log);
 
     return new Login(accessToken, refreshToken);
   }

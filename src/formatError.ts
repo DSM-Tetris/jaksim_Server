@@ -1,17 +1,14 @@
-import { ValidationError } from "apollo-server";
+import { BadRequest } from "./dto";
 
 export const formatError = err => {
   let { message, extensions } = err;
 
-  // class-validator and graphql validation exception handling
-  if (err instanceof ValidationError || message.startsWith("Argument")) {
-    message = "Invalid Parameteres";
-    extensions = { status: 400 };
+  if (message.startsWith("Cannot query field")) {
+    message = "Bad Gateway";
+  }
+  else if (extensions?.code === "GRAPHQL_VALIDATION_FAILED") {
+    return new BadRequest();
   }
 
-  return {
-    message:
-      extensions && extensions.status ? message : "Internal Server Error",
-    status: extensions && extensions.status ? extensions.status : 500,
-  };
+  return { message };
 };

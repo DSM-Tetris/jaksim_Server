@@ -1,34 +1,59 @@
-import { UserInputError, ApolloError } from "apollo-server";
+import { ApolloError } from "apollo-server";
 import config from "../config";
 import { transporter } from "../config/email";
-import { SendEmailRequest, HttpResponse } from "../dto";
-import { generateEmailAuthKey } from "../util";
-import { UserRepository } from "../repository";
+import {
+  SendEmailResult,
+  SendEmailSuccess,
+  VerifyEmailResult,
+  VerifyEmailSuccess,
+  VerifyEmailFailed,
+} from "../dto";
+import { generateEmailAuthKey, validateArguments } from "../util";
+import { EmailRepository } from "../repository";
+import { emailSchema } from "../schema";
 
 export class EmailService {
-  static async sendVerificationEmail({ email, nickname }: SendEmailRequest): Promise<HttpResponse> {
-    const user = await UserRepository.findByEmail(email);
-    if (user) {
-      throw new UserInputError("User Already Exists", {
-        status: 409
-      });
+  static async sendVerificationEmail(
+    email: string
+  ): Promise<typeof SendEmailResult> {
+    const validateArgumentResult = await validateArguments(email, emailSchema);
+    if (validateArgumentResult) {
+      throw validateArgumentResult;
     }
 
-    const isSuccess = await EmailService.sendMail({ email, nickname });
-    if (!isSuccess) {
-      throw new ApolloError("Internal Server Error");
+    if (await this.sendMail(email)) {
+      return new SendEmailSuccess();
     }
-    return { message: "OK", status: 200 };
+    throw new ApolloError("Internal Server Error");
   }
 
-  static async sendMail({ email, nickname }: SendEmailRequest): Promise<Boolean> {
+  static async verifyAuthCode(
+    email: string,
+    authCode: string
+  ): Promise<typeof VerifyEmailResult> {
+    const storedAuthCode = await EmailRepository.findByEmail(email);
+    if (authCode === storedAuthCode) {
+      return new VerifyEmailSuccess();
+    } else {
+      return new VerifyEmailFailed();
+    }
+  }
+
+  private static async sendMail(
+    email: string,
+  ): Promise<Boolean> {
+    const authCode = generateEmailAuthKey();
+
     const sendResult = await transporter.sendMail({
       from: `"Jaksim" <${config.EMAIL}>`,
-      to: `"${nickname}" <${email}>`,
+      to: `<${email}>`,
       subject: "Jaksim Email Auth",
-      text: `Email 인증 코드 : ${generateEmailAuthKey()}`
+      text: `Email 인증 코드 : ${authCode}`
     });
+
     transporter.close();
+    await EmailRepository.saveEmailAuthKey(email, authCode);
+
     return sendResult.accepted.length > 0;
   }
 }

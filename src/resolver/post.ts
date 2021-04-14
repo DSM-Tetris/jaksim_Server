@@ -1,11 +1,15 @@
 import { Resolver, Query, UseMiddleware, Arg, Mutation } from "type-graphql";
-import { GetPostsRequest, GetPostsResult, UploadPostResult } from "../dto";
+import { GraphQLUpload } from "graphql-upload";
+import {
+  GetPostsRequest,
+  GetPostsResult,
+  UploadPostResult,
+  UploadPostRequest,
+} from "../dto";
 import { Post } from "../entity";
 import { auth } from "../middleware";
-import { PostService } from "../service/post";
-import { UploadPostRequest } from "../dto/request/uploadPost";
-import { GraphQLUpload } from "graphql-upload";
-import { Upload } from "../type/upload";
+import { PostService } from "../service";
+import { Upload } from "../type";
 
 @Resolver(Post)
 export class PostResolver {

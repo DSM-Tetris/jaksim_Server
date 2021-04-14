@@ -1,9 +1,8 @@
 import { Arg, Mutation, Resolver } from "type-graphql";
 import { Post } from "../entity";
-import { UploadPostResult } from "../dto";
-import { UploadPostRequest } from "../dto/request/uploadPost";
+import { UploadPostResult, UploadPostRequest } from "../dto";
 import { GraphQLUpload } from "graphql-upload";
-import { Upload } from "../types/upload";
+import { Upload } from "../types";
 
 @Resolver(Post)
 export class PostResolver {

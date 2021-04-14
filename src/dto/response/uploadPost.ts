@@ -16,7 +16,7 @@ export class UploadPost {
 
 export const UploadPostResult = createUnionType({
   name: "UploadPostResult",
-  types: () => [] as const,
+  types: () => [UploadPost] as const,
   resolveType: (args) => {
     switch (args.message) {
       case UploadPostMessage.SuccessUploadPost: {

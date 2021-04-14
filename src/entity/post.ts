@@ -21,11 +21,11 @@ export class Post {
   createdAt!: Date;
 
   @Field(type => User)
-  user!: User;
+  user?: User;
 
   @Field(type => Category, { nullable: true })
-  category!: Category | null;
+  category?: Category | null;
 
   @Field(type => [Tag], { nullable: true })
-  tags!: [Tag] | null;
+  tags?: [Tag] | null;
 }

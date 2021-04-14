@@ -11,7 +11,7 @@ export const auth: MiddlewareFn = async (_, next) => {
   }
 
   const bearer: string = token.split("Bearer ")[1];
-  verify(bearer, config.JWT_SECERT, (err, decoded) => {
+  verify(bearer, config.JWT_SECRET, (err, decoded) => {
     if (err || !decoded) {
       return new Unauthorized();
     }

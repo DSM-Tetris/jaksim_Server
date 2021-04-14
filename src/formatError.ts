@@ -8,8 +8,11 @@ export const formatError = (err) => {
   if (message.startsWith("Cannot query field")) {
     message = "Bad Gateway";
   }
-  else if (extensions?.code === "GRAPHQL_VALIDATION_FAILED") {
+  else if (extensions?.code === "GRAPHQL_VALIDATION_FAILED" || message === "BAD REQUEST") {
     return new BadRequest();
+  }
+  else {
+    message = "Internal Server Error";
   }
 
   return { message };

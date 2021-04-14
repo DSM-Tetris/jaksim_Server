@@ -10,10 +10,6 @@ export class Log {
     this.user = user;
   }
 
-  static createLoginLog(user: User) {
-    return new Log(new Date(), LogType.LOGIN, user);
-  }
-
   @Field((type) => ID)
   readonly id!: number;
 

@@ -16,7 +16,7 @@ import { UserInputError } from "apollo-server";
 import { PasswordService } from "./password";
 import { JwtGenerator, JwtPayload, JwtValidator } from "../util";
 import { LogRepository } from "../repository/log";
-import { Log } from "../entity";
+import { Log, LogFactory, LoginLogFactory } from "../entity";
 
 export class UserService {
   static async signup(data: SignupRequest): Promise<void> {
@@ -57,7 +57,8 @@ export class UserService {
     const refreshToken = JwtGenerator.refreshToken();
     await TokenRepository.saveRefreshToken(username, refreshToken);
 
-    const log = Log.createLoginLog(user);
+    const logFactory: LogFactory = new LoginLogFactory();
+    const log = logFactory.create(user);
     await LogRepository.save(log);
 
     return new Login(accessToken, refreshToken);

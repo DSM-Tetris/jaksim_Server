@@ -32,7 +32,7 @@ export class PostPreview {
   @Length(1, 45)
   image: string;
 
-  @Field()
+  @Field(type => [String], { nullable: true })
   tags: string[] | null;
 }
 

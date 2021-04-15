@@ -1,39 +1,29 @@
 import { Arg, Mutation, Query, Resolver } from "type-graphql";
 import { User } from "../entity";
 import {
-  HttpResponse,
-  LoginRequest,
-  LoginResult,
   SignupRequest,
-  UserResponse,
-  SendEmailRequest,
+  SignupResult,
+  SendEmailResult,
+  LoginResult,
+  LoginRequest
 } from "../dto";
 import { UserService, EmailService } from "../service";
 import { RefreshResult, RefreshRequest } from "../dto";
 
 @Resolver(User)
 export class UserResolver {
-  @Mutation(() => HttpResponse)
-  async signup(@Arg("data") data: SignupRequest): Promise<HttpResponse> {
-    await UserService.signup(data);
-    return {
-      message: "User Created",
-      status: 201,
-    };
+  @Mutation(() => SignupResult)
+  async signup(
+    @Arg("data") data: SignupRequest
+  ): Promise<typeof SignupResult> {
+    return await UserService.signup(data);
   }
 
-  @Query(() => UserResponse, { nullable: true })
-  async getOneUser(
-    @Arg("username") username: string
-  ): Promise<UserResponse | null> {
-    return await UserService.getOneUser(username);
-  }
-
-  @Query(() => HttpResponse)
-  async verifyEmail(
-    @Arg("data") data: SendEmailRequest
-  ): Promise<HttpResponse> {
-    return await EmailService.sendVerificationEmail(data);
+  @Mutation(() => SendEmailResult)
+  async sendVerificationEmail(
+    @Arg("email") email: string
+  ): Promise<typeof SendEmailResult> {
+    return await EmailService.sendVerificationEmail(email);
   }
 
   @Mutation(() => LoginResult)

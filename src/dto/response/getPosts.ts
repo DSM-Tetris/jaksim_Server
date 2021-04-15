@@ -64,11 +64,14 @@ class NotFoundPost {
 
 export const GetPostsResult = createUnionType({
   name: "GetPostsResult",
-  types: () => [GetPosts] as const,
+  types: () => [GetPosts, NotFoundPost] as const,
   resolveType: args => {
     switch (args.message) {
       case GetPostsMessage.SuccessGetPosts: {
         return GetPosts;
+      }
+      case GetPostsMessage.NotFoundAnyPost: {
+        return NotFoundPost;
       }
       default: {
         return undefined;

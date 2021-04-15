@@ -3,7 +3,7 @@ import { Length, MaxLength } from "class-validator";
 
 enum GetPostsMessage {
   SuccessGetPosts = "SUCCESS GET POSTS",
-  NotFoundAnyPost = "NOT FOUND POSTS",
+  NotFoundAnyPost = "NOT FOUND ANY POST",
 }
 
 @ObjectType()
@@ -47,6 +47,16 @@ export class GetPosts {
 
   @Field()
   posts: PostPreview[];
+
+  @Field()
+  message: string;
+}
+
+@ObjectType()
+class NotFoundPost {
+  constructor() {
+    this.message = GetPostsMessage.NotFoundAnyPost;
+  }
 
   @Field()
   message: string;

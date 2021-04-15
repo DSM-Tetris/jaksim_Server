@@ -6,4 +6,3 @@ export * from "./getPosts";
 
 export * from "./badRequest";
 export * from "./unauthorized";
-export * from "./notFound";

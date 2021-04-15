@@ -15,7 +15,7 @@ export class PostService {
       return new Unauthorized();
     }
 
-    // 3. get user's posts
-    const post = await PostRepository.findManyByUsername(username, page);
+    const posts = await PostRepository.findManyByUsername(username, page);
+    console.log(posts);
   }
 }

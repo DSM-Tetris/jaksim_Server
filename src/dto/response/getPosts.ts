@@ -3,21 +3,21 @@ import { Length, MaxLength } from "class-validator";
 
 enum GetPostsMessage {
   SuccessGetPosts = "SUCCESS GET POSTS",
+  NotFoundAnyPost = "NOT FOUND POSTS",
 }
 
 @ObjectType()
-export class GetPosts {
+export class PostPreview {
   constructor(
     title: string,
     contentPreview: string,
     image: string,
-    tags: string[] | null
+    tags: string[] | null,
   ) {
     this.title = title;
     this.contentPreview = contentPreview;
     this.image = image;
     this.tags = tags;
-    this.message = GetPostsMessage.SuccessGetPosts;
   }
 
   @Field()
@@ -34,6 +34,19 @@ export class GetPosts {
 
   @Field()
   tags: string[] | null;
+}
+
+@ObjectType()
+export class GetPosts {
+  constructor(
+    posts: PostPreview[]
+  ) {
+    this.posts = posts;
+    this.message = GetPostsMessage.SuccessGetPosts;
+  }
+
+  @Field()
+  posts: PostPreview[];
 
   @Field()
   message: string;

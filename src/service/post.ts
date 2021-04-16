@@ -1,5 +1,6 @@
 import {
   GetPostsRequest,
+  GetPostsResult,
   PostPreview,
   GetPosts,
   Unauthorized,
@@ -11,7 +12,7 @@ import { context } from "../context";
 import { PostRepository, TagRepository } from "../repository";
 
 export class PostService {
-  static async getPosts({ username, page }: GetPostsRequest) {
+  static async getPosts({ username, page }: GetPostsRequest): Promise<typeof GetPostsResult> {
     const validateArgumentResult = await validateArguments(username, usernameSchema);
     if (validateArgumentResult) {
       throw validateArgumentResult;

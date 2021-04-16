@@ -27,6 +27,6 @@ export class Log {
   @Field((type) => LogType)
   type!: LogType;
 
-  @Field(type => User)
+  @Field((type) => User)
   user!: User;
 }

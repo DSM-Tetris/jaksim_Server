@@ -8,4 +8,8 @@ export class Unauthorized {
 
   @Field()
   message: string;
+
+  static getMessage(): string {
+    return "UNAUTHORIZED";
+  }
 }

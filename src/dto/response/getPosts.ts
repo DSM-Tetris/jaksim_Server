@@ -1,5 +1,6 @@
 import { ObjectType, Field, createUnionType } from "type-graphql";
 import { Length, MaxLength } from "class-validator";
+import { Tag } from "../../entity";
 
 enum GetPostsMessage {
   SuccessGetPosts = "SUCCESS GET POSTS",
@@ -10,9 +11,9 @@ enum GetPostsMessage {
 export class PostPreview {
   constructor(
     title: string,
-    contentPreview: string,
+    contentPreview: string | null,
     image: string,
-    tags: string[],
+    tags: Tag[]
   ) {
     this.title = title;
     this.contentPreview = contentPreview;
@@ -24,16 +25,16 @@ export class PostPreview {
   @Length(1, 45)
   title: string;
 
-  @Field()
+  @Field(type => String, { nullable: true })
   @MaxLength(100)
-  contentPreview: string;
+  contentPreview: string | null;
 
   @Field()
   @Length(1, 45)
   image: string;
 
-  @Field(type => [String])
-  tags: string[];
+  @Field(type => [Tag])
+  tags: Tag[];
 }
 
 @ObjectType()
@@ -53,7 +54,7 @@ export class GetPosts {
 }
 
 @ObjectType()
-class NotFoundPost {
+export class NotFoundPost {
   constructor() {
     this.message = GetPostsMessage.NotFoundAnyPost;
   }

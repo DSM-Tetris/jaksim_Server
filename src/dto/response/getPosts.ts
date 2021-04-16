@@ -12,7 +12,7 @@ export class PostPreview {
     title: string,
     contentPreview: string,
     image: string,
-    tags: string[] | null,
+    tags: string[],
   ) {
     this.title = title;
     this.contentPreview = contentPreview;
@@ -32,8 +32,8 @@ export class PostPreview {
   @Length(1, 45)
   image: string;
 
-  @Field(type => [String], { nullable: true })
-  tags: string[] | null;
+  @Field(type => [String])
+  tags: string[];
 }
 
 @ObjectType()
@@ -45,7 +45,7 @@ export class GetPosts {
     this.message = GetPostsMessage.SuccessGetPosts;
   }
 
-  @Field()
+  @Field(type => [PostPreview])
   posts: PostPreview[];
 
   @Field()

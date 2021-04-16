@@ -1,4 +1,4 @@
-import { Field, ID, ObjectType } from "type-graphql";
+import { Field, ID, ObjectType, Int } from "type-graphql";
 import { User } from "./user";
 import { Category } from "./category";
 import { Tag } from "./tag";
@@ -23,8 +23,14 @@ export class Post {
   @Field(type => User)
   user?: User;
 
+  @Field()
+  username!: string;
+
   @Field(type => Category, { nullable: true })
   category?: Category | null;
+
+  @Field(type => Int, { nullable: true })
+  categoryId!: number | null;
 
   @Field(type => [Tag], { nullable: true })
   tags?: [Tag] | null;

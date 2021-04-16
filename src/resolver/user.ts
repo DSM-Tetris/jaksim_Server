@@ -5,17 +5,18 @@ import {
   SignupResult,
   SendEmailResult,
   LoginResult,
-  LoginRequest
+  LoginRequest,
 } from "../dto";
 import { UserService, EmailService } from "../service";
 import { RefreshResult, RefreshRequest } from "../dto";
 
 @Resolver(User)
 export class UserResolver {
+  @Query(() => User)
+  async getUser() {}
+
   @Mutation(() => SignupResult)
-  async signup(
-    @Arg("data") data: SignupRequest
-  ): Promise<typeof SignupResult> {
+  async signup(@Arg("data") data: SignupRequest): Promise<typeof SignupResult> {
     return await UserService.signup(data);
   }
 

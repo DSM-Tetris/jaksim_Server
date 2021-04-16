@@ -1,6 +1,7 @@
 import { ObjectType, Field, createUnionType } from "type-graphql";
 import { Length, MaxLength } from "class-validator";
 import { Tag } from "../../entity";
+import { Unauthorized } from "./unauthorized";
 
 enum GetPostsMessage {
   SuccessGetPosts = "SUCCESS GET POSTS",
@@ -65,11 +66,14 @@ export class NotFoundPost {
 
 export const GetPostsResult = createUnionType({
   name: "GetPostsResult",
-  types: () => [GetPosts, NotFoundPost] as const,
+  types: () => [GetPosts, Unauthorized, NotFoundPost] as const,
   resolveType: args => {
     switch (args.message) {
       case GetPostsMessage.SuccessGetPosts: {
         return GetPosts;
+      }
+      case Unauthorized.getMessage(): {
+        return Unauthorized;
       }
       case GetPostsMessage.NotFoundAnyPost: {
         return NotFoundPost;

@@ -1,4 +1,5 @@
 import { Resolver, Query, UseMiddleware, Arg, Mutation } from "type-graphql";
+import { Post } from "../entity";
 import { GraphQLUpload } from "graphql-upload";
 import {
   GetPostsRequest,
@@ -6,7 +7,6 @@ import {
   UploadPostResult,
   UploadPostRequest,
 } from "../dto";
-import { Post } from "../entity";
 import { auth } from "../middleware";
 import { PostService } from "../service";
 import { Upload } from "../type";

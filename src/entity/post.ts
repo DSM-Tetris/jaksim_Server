@@ -33,5 +33,5 @@ export class Post {
   categoryId!: number | null;
 
   @Field(type => [Tag], { nullable: true })
-  tags?: [Tag] | null;
+  tags?: Tag[] | null;
 }

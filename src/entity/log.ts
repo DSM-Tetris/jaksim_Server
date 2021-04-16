@@ -1,10 +1,13 @@
-import { Field, ID, ObjectType } from "type-graphql";
+import { Field, ID, ObjectType, registerEnumType } from "type-graphql";
 import { User } from "./user";
 
 enum LogType {
   Login = "LOGIN",
   Posting = "POSTING"
 }
+registerEnumType(LogType, {
+  name: "LogType"
+});
 
 @ObjectType()
 export class Log {

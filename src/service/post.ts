@@ -1,9 +1,13 @@
 import {
   GetPostsRequest,
   GetPostsResult,
+  GetPostRequest,
+  GetPostResult,
   PostPreview,
   GetPosts,
+  GetPost,
   Unauthorized,
+  NotFoundAnyPost,
   NotFoundPost,
 } from "../dto";
 import { usernameSchema } from "../schema";
@@ -35,6 +39,30 @@ export class PostService {
       ));
     }
 
-    return posts.length ? new GetPosts(response) : new NotFoundPost();
+    return posts.length ? new GetPosts(response) : new NotFoundAnyPost();
+  }
+
+  static async getPost({ username, postId }: GetPostRequest): Promise<typeof GetPostResult> {
+    const validateArgumentResult = await validateArguments(username, usernameSchema);
+    if (validateArgumentResult) {
+      throw validateArgumentResult;
+    }
+
+    if (context.decoded["username"] !== username) {
+      return new Unauthorized();
+    }
+
+    const post = await PostRepository.findOneByPostId(postId);
+    if (!post) {
+      return new NotFoundPost();
+    }
+    if (post.username !== username) {
+      return new Unauthorized();
+    }
+
+    const tags = await TagRepository.findByPostId(postId);
+    post.tags = tags;
+
+    return new GetPost(post);
   }
 }

@@ -12,4 +12,10 @@ export class PostRepository {
       take: 10,
     });
   }
+
+  static async findOneByPostId(postId: number): Promise<Post | null> {
+    return await context.prisma.post.findUnique({
+      where: { id: postId }
+    });
+  }
 }

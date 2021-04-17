@@ -55,7 +55,7 @@ export class GetPosts {
 }
 
 @ObjectType()
-export class NotFoundPost {
+export class NotFoundAnyPost {
   constructor() {
     this.message = GetPostsMessage.NotFoundAnyPost;
   }
@@ -66,7 +66,7 @@ export class NotFoundPost {
 
 export const GetPostsResult = createUnionType({
   name: "GetPostsResult",
-  types: () => [GetPosts, Unauthorized, NotFoundPost] as const,
+  types: () => [GetPosts, Unauthorized, NotFoundAnyPost] as const,
   resolveType: args => {
     switch (args.message) {
       case GetPostsMessage.SuccessGetPosts: {
@@ -76,7 +76,7 @@ export const GetPostsResult = createUnionType({
         return Unauthorized;
       }
       case GetPostsMessage.NotFoundAnyPost: {
-        return NotFoundPost;
+        return NotFoundAnyPost;
       }
       default: {
         return undefined;

@@ -8,8 +8,8 @@ export class PostRepository {
   ): Promise<Post[]> {
     return await context.prisma.post.findMany({
       where: { username },
-      skip: (page - 1) * 5,
-      take: 5,
+      skip: (page - 1) * 10,
+      take: 10,
     });
   }
 }

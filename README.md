@@ -20,6 +20,10 @@
     - Express.js와 GraphQL을 사용한 백엔드 구현
     - 회원가입, 게시물 조회 기능 구현
     - 기여도: ![image](https://user-images.githubusercontent.com/51042546/115130468-09991f80-a02b-11eb-8e47-4d3ab178ece3.png)
+  - 김대웅
+    - Express.js와 GraphQL을 사용한 백엔드 구현
+    - 로그인, 게시물 작성 기능 구현
+    - 기여도: ![image](https://user-images.githubusercontent.com/51042546/115130468-09991f80-a02b-11eb-8e47-4d3ab178ece3.png)
 
 ## 개발 일지 및 회고
 

@@ -12,7 +12,7 @@ export class PostResolver {
   @Mutation(() => UploadPostResult)
   async uploadPost(
     @Arg("data") data: UploadPostRequest,
-    @Arg("picture", () => GraphQLUpload) { createReadStream, filename }: Upload
+    @Arg("picture", () => GraphQLUpload) file: Upload
   ): Promise<typeof UploadPostRequest> {
     return null;
   }

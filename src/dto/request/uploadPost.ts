@@ -1,5 +1,6 @@
 import { Field, InputType } from "type-graphql";
 import { Length } from "class-validator";
+import { Post } from "../../entity";
 
 @InputType()
 export class UploadPostRequest {
@@ -13,4 +14,14 @@ export class UploadPostRequest {
 
   @Field()
   categoryId!: number;
+
+  toPostEntity(username: string, imageName: string) {
+    return new Post(
+      this.title,
+      this.content,
+      imageName,
+      username,
+      this.categoryId
+    );
+  }
 }

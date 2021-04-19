@@ -4,6 +4,7 @@ import { Unauthorized } from "./unauthorized";
 
 enum GetPostMessage {
   SuccessGetPost = "SUCCESS GET POST",
+  ForbiddenPost = "FORBIDDEN",
   NotFoundPost = "NOT FOUND POST",
 }
 
@@ -24,6 +25,16 @@ export class GetPost {
 }
 
 @ObjectType()
+export class ForbiddenPost {
+  constructor() {
+    this.message = GetPostMessage.ForbiddenPost
+  }
+
+  @Field()
+  message: string;
+}
+
+@ObjectType()
 export class NotFoundPost {
   constructor() {
     this.message = GetPostMessage.NotFoundPost;
@@ -35,7 +46,7 @@ export class NotFoundPost {
 
 export const GetPostResult = createUnionType({
   name: "GetPostResult",
-  types: () => [GetPost, Unauthorized, NotFoundPost] as const,
+  types: () => [GetPost, Unauthorized, ForbiddenPost, NotFoundPost] as const,
   resolveType: args => {
     switch (args.message) {
       case GetPostMessage.SuccessGetPost: {
@@ -43,6 +54,9 @@ export const GetPostResult = createUnionType({
       }
       case Unauthorized.getMessage(): {
         return Unauthorized;
+      }
+      case GetPostMessage.ForbiddenPost: {
+        return ForbiddenPost;
       }
       case GetPostMessage.NotFoundPost: {
         return NotFoundPost;

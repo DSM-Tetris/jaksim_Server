@@ -34,4 +34,5 @@ export class PostService {
 
     return posts.length ? new GetPosts(response) : new NotFoundPost();
   }
+  static async uploadPost(data: UploadPostRequest, file: Upload) {}
 }

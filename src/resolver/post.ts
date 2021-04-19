@@ -25,5 +25,7 @@ export class PostResolver {
   async uploadPost(
     @Arg("data") data: UploadPostRequest,
     @Arg("picture", () => GraphQLUpload) { createReadStream, filename }: Upload
-  ) {}
+  ): Promise<typeof UploadPostRequest> {
+    return null;
+  }
 }

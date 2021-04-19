@@ -2,7 +2,6 @@ import {
   GetPostRequest,
   GetPostResult,
   GetPost,
-  Unauthorized,
   ForbiddenPost,
   NotFoundPost,
 } from "../dto";

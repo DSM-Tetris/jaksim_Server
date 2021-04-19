@@ -3,23 +3,20 @@ import {
   GetPostsResult,
   PostPreview,
   GetPosts,
-  Unauthorized,
   NotFoundPost,
 } from "../dto";
-import { usernameSchema } from "../schema";
+import { getPostsSchema } from "../schema";
 import { validateArguments } from "../util";
 import { context } from "../context";
 import { PostRepository, TagRepository } from "../repository";
 
 export class PostService {
-  static async getPosts({ username, page }: GetPostsRequest): Promise<typeof GetPostsResult> {
-    const validateArgumentResult = await validateArguments(username, usernameSchema);
+  static async getPosts({ page }: GetPostsRequest): Promise<typeof GetPostsResult> {
+    const username = context.decoded["username"];
+
+    const validateArgumentResult = await validateArguments({ username, page }, getPostsSchema);
     if (validateArgumentResult) {
       throw validateArgumentResult;
-    }
-
-    if (context.decoded["username"] !== username) {
-      return new Unauthorized();
     }
 
     const posts = await PostRepository.findManyByUsername(username, page);

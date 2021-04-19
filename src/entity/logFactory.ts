@@ -1,6 +1,5 @@
 import { User } from "./user";
-import { Log } from "./log";
-import { LogType } from "./logType";
+import { Log, LogType } from "./log";
 
 export abstract class LogFactory {
   public readonly create = (user: User) => {

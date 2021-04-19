@@ -8,3 +8,4 @@ export * from "./getPosts";
 
 export * from "./badRequest";
 export * from "./unauthorized";
+>>>>>>>>> Temporary merge branch 2

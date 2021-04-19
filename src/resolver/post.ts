@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import { Resolver, Query, UseMiddleware, Arg, Mutation } from "type-graphql";
 import { Post } from "../entity";
 import { GraphQLUpload } from "graphql-upload";

@@ -10,14 +10,6 @@ registerEnumType(LogType, {
   name: "LogType",
 });
 
-enum LogType {
-  Login = "LOGIN",
-  Posting = "POSTING"
-}
-registerEnumType(LogType, {
-  name: "LogType"
-});
-
 @ObjectType()
 export class Log {
   constructor(date: Date, type: LogType, user: User) {

@@ -1,15 +1,22 @@
 import {
+  InvalidAccessToken,
+  InvalidLoginInfo,
+  InvalidRefreshToken,
+  Login,
   LoginRequest,
+  LoginResult,
+  Refresh,
+  RefreshRequest,
+  RefreshResult,
   SignupRequest,
   UserResponse,
-  LoginResult,
-  InvalidLoginInfo,
-  Login,
 } from "../dto";
-import { UserRepository, TokenRepository } from "../repository";
+import { TokenRepository, UserRepository } from "../repository";
 import { UserInputError } from "apollo-server";
 import { PasswordService } from "./password";
-import { JwtGenerator } from "../util/jwtGenerator";
+import { JwtGenerator, JwtPayload, JwtValidator } from "../util";
+import { LogRepository } from "../repository/log";
+import { Log, LogFactory, LoginLogFactory } from "../entity";
 
 export class UserService {
   static async signup(data: SignupRequest): Promise<void> {
@@ -50,6 +57,37 @@ export class UserService {
     const refreshToken = JwtGenerator.refreshToken();
     await TokenRepository.saveRefreshToken(username, refreshToken);
 
+    const logFactory: LogFactory = new LoginLogFactory();
+    const log = logFactory.create(user);
+    await LogRepository.save(log);
+
     return new Login(accessToken, refreshToken);
+  }
+
+  static async regenerateAccessToken({
+    accessToken,
+    refreshToken,
+  }: RefreshRequest): Promise<typeof RefreshResult> {
+    const decodedAccessToken = JwtValidator.decode(accessToken);
+    if (!decodedAccessToken) {
+      return new InvalidAccessToken();
+    }
+
+    const storedRefreshToken = await TokenRepository.findByUsername(
+      (decodedAccessToken as JwtPayload).username
+    );
+    if (storedRefreshToken !== refreshToken) {
+      return new InvalidRefreshToken();
+    }
+
+    const decodedRefreshToken = JwtValidator.verify(refreshToken);
+    if (!decodedRefreshToken) {
+      return new InvalidRefreshToken();
+    }
+
+    const regeneratedAccessToken = JwtGenerator.accessToken(
+      decodedAccessToken as JwtPayload
+    );
+    return new Refresh(regeneratedAccessToken);
   }
 }

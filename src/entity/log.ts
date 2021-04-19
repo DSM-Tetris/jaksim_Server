@@ -12,10 +12,10 @@ registerEnumType(LogType, {
 
 @ObjectType()
 export class Log {
-  constructor(date: Date, type: LogType, user: User) {
+  constructor(date: Date, type: LogType, username: string) {
     this.date = date;
     this.type = type;
-    this.user = user;
+    this.username = username;
   }
 
   @Field((type) => ID)
@@ -28,5 +28,8 @@ export class Log {
   type!: LogType;
 
   @Field((type) => User)
-  user!: User;
+  user?: User | null;
+
+  @Field()
+  username!: string;
 }

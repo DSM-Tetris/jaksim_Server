@@ -1,4 +1,4 @@
-import { UploadPostRequest, UploadPostResult } from "../dto";
+import { UploadPost, UploadPostRequest, UploadPostResult } from "../dto";
 import { Upload } from "../types";
 import { createWriteStream } from "fs";
 import path from "path";
@@ -13,6 +13,9 @@ import { getPostsSchema } from "../schema";
 import { validateArguments } from "../util";
 import { context } from "../context";
 import { PostRepository, TagRepository } from "../repository";
+import { ImageNameGenerator } from "../util/imageNameGenerator";
+import { Log, LogFactory, PostingLogFactory } from "../entity";
+import { LogRepository } from "../repository/log";
 
 export class PostService {
   static async getPosts({
@@ -50,18 +53,30 @@ export class PostService {
     data: UploadPostRequest,
     file: Upload
   ): Promise<typeof UploadPostResult> {
-    return null;
+    // TODO validate input values
+    const username = context.decoded["username"];
+    const imageName = await this.uploadImage(file);
+
+    await this.savePostingLog(username);
+
+    await PostRepository.save(data.toPostEntity(username, imageName));
+    return new UploadPost();
   }
 
-  private static uploadImage(file: Upload): Promise<void> {
+  private static async savePostingLog(username: string) {
+    const logFactory: LogFactory = new PostingLogFactory();
+    const postingLog = logFactory.create(username);
+    await LogRepository.save(postingLog);
+  }
+
+  private static uploadImage(file: Upload): Promise<string> {
     return new Promise((resolve, reject) => {
+      const imageName = ImageNameGenerator.imageName(file.filename);
       file
         .createReadStream()
-        .pipe(
-          createWriteStream(path.join(__dirname, "../images", file.filename))
-        )
-        .on("finish", () => resolve())
-        .on("error", () => reject());
+        .pipe(createWriteStream(path.join(__dirname, "../images", imageName)))
+        .on("finish", () => resolve(imageName))
+        .on("error", (err) => reject(err));
     });
   }
 }

@@ -8,41 +8,45 @@ enum GetPostMessage {
   NotFoundPost = "NOT FOUND POST",
 }
 
-@ObjectType()
-export class GetPost {
-  constructor(
-    post: Post | null,
-  ) {
-    this.post = post;
-    this.message = GetPostMessage.SuccessGetPost;
+export namespace GetPostResponse {
+  @ObjectType()
+  export class GetPost {
+    constructor(
+      post: Post | null,
+    ) {
+      this.post = post;
+      this.message = GetPostMessage.SuccessGetPost;
+    }
+
+    @Field(type => Post, { nullable: true })
+    post: Post | null;
+
+    @Field()
+    message: string;
   }
 
-  @Field(type => Post, { nullable: true })
-  post: Post | null;
+  @ObjectType()
+  export class ForbiddenPost {
+    constructor() {
+      this.message = GetPostMessage.ForbiddenPost
+    }
 
-  @Field()
-  message: string;
-}
-
-@ObjectType()
-export class ForbiddenPost {
-  constructor() {
-    this.message = GetPostMessage.ForbiddenPost
+    @Field()
+    message: string;
   }
 
-  @Field()
-  message: string;
-}
+  @ObjectType()
+  export class NotFoundPost {
+    constructor() {
+      this.message = GetPostMessage.NotFoundPost;
+    }
 
-@ObjectType()
-export class NotFoundPost {
-  constructor() {
-    this.message = GetPostMessage.NotFoundPost;
+    @Field()
+    message: string;
   }
-
-  @Field()
-  message: string;
 }
+
+const { GetPost, ForbiddenPost, NotFoundPost } = GetPostResponse;
 
 export const GetPostResult = createUnionType({
   name: "GetPostResult",

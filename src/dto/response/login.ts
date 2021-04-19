@@ -5,33 +5,37 @@ enum LoginMessage {
   InvalidLoginInfo = "INVALID LOGIN INFO",
 }
 
-@ObjectType()
-export class Login {
-  constructor(accessToken: string, refreshToken: string) {
-    this.accessToken = accessToken;
-    this.refreshToken = refreshToken;
-    this.message = LoginMessage.SuccessLogin;
+export namespace LoginResponse {
+  @ObjectType()
+  export class Login {
+    constructor(accessToken: string, refreshToken: string) {
+      this.accessToken = accessToken;
+      this.refreshToken = refreshToken;
+      this.message = LoginMessage.SuccessLogin;
+    }
+
+    @Field()
+    accessToken!: string;
+
+    @Field()
+    refreshToken!: string;
+
+    @Field()
+    message!: string;
   }
 
-  @Field()
-  accessToken!: string;
+  @ObjectType()
+  export class InvalidLoginInfo {
+    constructor() {
+      this.message = LoginMessage.InvalidLoginInfo;
+    }
 
-  @Field()
-  refreshToken!: string;
-
-  @Field()
-  message!: string;
-}
-
-@ObjectType()
-export class InvalidLoginInfo {
-  constructor() {
-    this.message = LoginMessage.InvalidLoginInfo;
+    @Field()
+    message!: string;
   }
-
-  @Field()
-  message!: string;
 }
+
+const { Login, InvalidLoginInfo } = LoginResponse;
 
 export const LoginResult = createUnionType({
   name: "LoginResult",

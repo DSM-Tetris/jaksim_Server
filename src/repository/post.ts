@@ -10,6 +10,9 @@ export class PostRepository {
       where: { username },
       skip: (page - 1) * 10,
       take: 10,
+      orderBy: {
+        createdAt: "desc",
+      }
     });
   }
 }

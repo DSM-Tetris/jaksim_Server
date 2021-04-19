@@ -23,7 +23,7 @@ export class PostService {
     if (!post) {
       return new NotFoundPost();
     }
-    if (!post.username !== username) {
+    if (post.username !== username) {
       return new ForbiddenPost();
     }
 

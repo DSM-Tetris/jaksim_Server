@@ -1,26 +1,27 @@
 import {
-  InvalidAccessToken,
-  InvalidLoginInfo,
-  InvalidRefreshToken,
-  Login,
+  LoginResponse,
+  RefreshResponse,
   SignupResult,
   SuccessSignup,
   AlreadyUserExists,
   VerifyEmailFailed,
   LoginRequest,
   SignupRequest,
-  UserResponse,
   LoginResult,
-  InvalidLoginInfo,
-  Login,
+  RefreshResult,
+  RefreshRequest,
 } from "../dto";
 import { TokenRepository, UserRepository } from "../repository";
 import { PasswordService } from "./password";
-import { JwtGenerator, JwtPayload, JwtValidator } from "../util";
+import {
+  JwtGenerator,
+  JwtPayload,
+  JwtValidator,
+  validateArguments,
+} from "../util";
 import { LogRepository } from "../repository/log";
-import { Log, LogFactory, LoginLogFactory } from "../entity";
+import { LogFactory, LoginLogFactory } from "../entity";
 import { EmailService } from "./email";
-import { JwtGenerator, validateArguments } from "../util";
 import { signupSchema } from "../schema";
 
 export class UserService {
@@ -34,8 +35,11 @@ export class UserService {
     if (user) {
       return new AlreadyUserExists();
     }
-    
-    const verifyResult = await EmailService.verifyAuthCode(data.email, data.authCode);
+
+    const verifyResult = await EmailService.verifyAuthCode(
+      data.email,
+      data.authCode
+    );
     if (verifyResult instanceof VerifyEmailFailed) {
       return verifyResult;
     }
@@ -52,7 +56,7 @@ export class UserService {
   }: LoginRequest): Promise<typeof LoginResult> {
     const user = await UserRepository.findByUsername(username);
     if (!user) {
-      return new InvalidLoginInfo();
+      return new LoginResponse.InvalidLoginInfo();
     }
 
     const isPasswordMatched = await PasswordService.match(
@@ -60,7 +64,7 @@ export class UserService {
       user.password
     );
     if (!isPasswordMatched) {
-      return new InvalidLoginInfo();
+      return new LoginResponse.InvalidLoginInfo();
     }
 
     const accessToken = JwtGenerator.accessToken({ username });
@@ -71,7 +75,7 @@ export class UserService {
     const log = logFactory.create(user);
     await LogRepository.save(log);
 
-    return new Login(accessToken, refreshToken);
+    return new LoginResponse.Login(accessToken, refreshToken);
   }
 
   static async regenerateAccessToken({
@@ -80,24 +84,24 @@ export class UserService {
   }: RefreshRequest): Promise<typeof RefreshResult> {
     const decodedAccessToken = JwtValidator.decode(accessToken);
     if (!decodedAccessToken) {
-      return new InvalidAccessToken();
+      return new RefreshResponse.InvalidRefreshToken();
     }
 
     const storedRefreshToken = await TokenRepository.findByUsername(
       (decodedAccessToken as JwtPayload).username
     );
     if (storedRefreshToken !== refreshToken) {
-      return new InvalidRefreshToken();
+      return new RefreshResponse.InvalidRefreshToken();
     }
 
     const decodedRefreshToken = JwtValidator.verify(refreshToken);
     if (!decodedRefreshToken) {
-      return new InvalidRefreshToken();
+      return new RefreshResponse.InvalidRefreshToken();
     }
 
     const regeneratedAccessToken = JwtGenerator.accessToken(
       decodedAccessToken as JwtPayload
     );
-    return new Refresh(regeneratedAccessToken);
+    return new RefreshResponse.Refresh(regeneratedAccessToken);
   }
 }

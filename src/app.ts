@@ -1,22 +1,26 @@
 import "reflect-metadata";
 import { buildSchema } from "type-graphql";
 import { ApolloServer } from "apollo-server";
-import { UserResolver } from "./resolver";
+import { UserResolver, PostResolver } from "./resolver";
 import { context } from "./context";
 import config from "./config";
 import { formatError } from "./formatError";
 
 export const app = async () => {
   const schema = await buildSchema({
-    resolvers: [UserResolver],
+    resolvers: [UserResolver, PostResolver],
+    validate: false
   });
 
   new ApolloServer({
     schema,
-    context,
+    context: ({ req }) => {
+      context.token = req.headers.authorization || "";
+      return context;
+    },
     debug: false,
-    formatError,
     cors: true,
+    formatError
   }).listen({ port: config.SERVER_PORT }, () => {
     console.log(`Server listening at ${config.SERVER_PORT} port!`);
   });

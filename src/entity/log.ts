@@ -1,6 +1,14 @@
-import { Field, ID, ObjectType } from "type-graphql";
+import { Field, ID, ObjectType, registerEnumType } from "type-graphql";
 import { User } from "./user";
 import { LogType } from "./logType";
+
+enum LogType {
+  Login = "LOGIN",
+  Posting = "POSTING"
+}
+registerEnumType(LogType, {
+  name: "LogType"
+});
 
 @ObjectType()
 export class Log {
@@ -19,6 +27,6 @@ export class Log {
   @Field((type) => LogType)
   type!: LogType;
 
-  @Field((type) => User)
+  @Field(type => User)
   user!: User;
 }

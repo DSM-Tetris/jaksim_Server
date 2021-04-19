@@ -3,37 +3,47 @@ import {
   InvalidLoginInfo,
   InvalidRefreshToken,
   Login,
+  SignupResult,
+  SuccessSignup,
+  AlreadyUserExists,
+  VerifyEmailFailed,
   LoginRequest,
-  LoginResult,
-  Refresh,
-  RefreshRequest,
-  RefreshResult,
   SignupRequest,
   UserResponse,
+  LoginResult,
+  InvalidLoginInfo,
+  Login,
 } from "../dto";
 import { TokenRepository, UserRepository } from "../repository";
-import { UserInputError } from "apollo-server";
 import { PasswordService } from "./password";
 import { JwtGenerator, JwtPayload, JwtValidator } from "../util";
 import { LogRepository } from "../repository/log";
 import { Log, LogFactory, LoginLogFactory } from "../entity";
+import { EmailService } from "./email";
+import { JwtGenerator, validateArguments } from "../util";
+import { signupSchema } from "../schema";
 
 export class UserService {
-  static async signup(data: SignupRequest): Promise<void> {
-    const user = await UserRepository.findByUsername(data.username);
+  static async signup(data: SignupRequest): Promise<typeof SignupResult> {
+    const validateArgumentsResult = await validateArguments(data, signupSchema);
+    if (validateArgumentsResult) {
+      throw validateArgumentsResult;
+    }
+
+    const user = await UserRepository.findByEmail(data.email);
     if (user) {
-      throw new UserInputError("User Already Exists", {
-        status: 409,
-      });
+      return new AlreadyUserExists();
+    }
+    
+    const verifyResult = await EmailService.verifyAuthCode(data.email, data.authCode);
+    if (verifyResult instanceof VerifyEmailFailed) {
+      return verifyResult;
     }
 
     data.password = await PasswordService.encryptPassword(data.password);
-    return UserRepository.save(data.toUserEntity());
-  }
+    await UserRepository.save(data.toUserEntity());
 
-  static async getOneUser(username: string): Promise<UserResponse | null> {
-    const user = await UserRepository.findByUsername(username);
-    return user ? UserResponse.from(user) : null;
+    return new SuccessSignup();
   }
 
   static async login({

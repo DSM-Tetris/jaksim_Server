@@ -6,39 +6,43 @@ enum RefreshMessage {
   InvalidRefreshToken = "INVALID REFRESH TOKEN",
 }
 
-@ObjectType()
-export class Refresh {
-  constructor(accessToken: string) {
-    this.accessToken = accessToken;
-    this.message = RefreshMessage.SuccessRefresh;
+export namespace RefreshResponse {
+  @ObjectType()
+  export class Refresh {
+    constructor(accessToken: string) {
+      this.accessToken = accessToken;
+      this.message = RefreshMessage.SuccessRefresh;
+    }
+
+    @Field()
+    accessToken!: string;
+
+    @Field()
+    message!: string;
   }
 
-  @Field()
-  accessToken!: string;
+  @ObjectType()
+  export class InvalidAccessToken {
+    constructor() {
+      this.message = RefreshMessage.InvalidAccessToken;
+    }
 
-  @Field()
-  message!: string;
-}
-
-@ObjectType()
-export class InvalidAccessToken {
-  constructor() {
-    this.message = RefreshMessage.InvalidAccessToken;
+    @Field()
+    message!: string;
   }
 
-  @Field()
-  message!: string;
-}
+  @ObjectType()
+  export class InvalidRefreshToken {
+    constructor() {
+      this.message = RefreshMessage.InvalidRefreshToken;
+    }
 
-@ObjectType()
-export class InvalidRefreshToken {
-  constructor() {
-    this.message = RefreshMessage.InvalidRefreshToken;
+    @Field()
+    message!: string;
   }
-
-  @Field()
-  message!: string;
 }
+
+const { Refresh, InvalidAccessToken, InvalidRefreshToken } = RefreshResponse;
 
 export const RefreshResult = createUnionType({
   name: "RefreshResult",

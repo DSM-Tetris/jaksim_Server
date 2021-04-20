@@ -29,22 +29,24 @@ export namespace VerifyEmailResponse {
       return VerifyEmailMessage.Fail;
     }
   }
-  
-  export const VerifyEmailResult = createUnionType({
-    name: "VerifyEmailResult",
-    types: () => [VerifyEmailSuccess, VerifyEmailFailed],
-    resolveType: args => {
-      switch (args.message) {
-        case VerifyEmailMessage.Success: {
-          return VerifyEmailSuccess;
-        }
-        case VerifyEmailMessage.Fail: {
-          return VerifyEmailFailed;
-        }
-        default: {
-          return undefined;
-        }
+}
+
+const { VerifyEmailSuccess, VerifyEmailFailed } = VerifyEmailResponse;
+
+export const VerifyEmailResult = createUnionType({
+  name: "VerifyEmailResult",
+  types: () => [VerifyEmailSuccess, VerifyEmailFailed],
+  resolveType: args => {
+    switch (args.message) {
+      case VerifyEmailMessage.Success: {
+        return VerifyEmailSuccess;
+      }
+      case VerifyEmailMessage.Fail: {
+        return VerifyEmailFailed;
+      }
+      default: {
+        return undefined;
       }
     }
-  });
-}
+  }
+});

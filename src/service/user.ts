@@ -1,16 +1,26 @@
 import {
-  SignupRequest,
+  LoginResponse,
+  RefreshResponse,
   SignupResult,
   SignupResponse,
   VerifyEmailResponse,
   LoginRequest,
+  SignupRequest,
   LoginResult,
-  LoginResponse,
+  RefreshResult,
+  RefreshRequest,
 } from "../dto";
 import { TokenRepository, UserRepository } from "../repository";
 import { PasswordService } from "./password";
+import {
+  JwtGenerator,
+  JwtPayload,
+  JwtValidator,
+  validateArguments,
+} from "../util";
+import { LogRepository } from "../repository/log";
+import { LogFactory, LoginLogFactory } from "../entity";
 import { EmailService } from "./email";
-import { JwtGenerator, validateArguments } from "../util";
 import { signupSchema } from "../schema";
 
 export class UserService {
@@ -24,8 +34,11 @@ export class UserService {
     if (user) {
       return new SignupResponse.AlreadyUserExists();
     }
-    
-    const verifyResult = await EmailService.verifyAuthCode(data.email, data.authCode);
+
+    const verifyResult = await EmailService.verifyAuthCode(
+      data.email,
+      data.authCode
+    );
     if (verifyResult instanceof VerifyEmailResponse.VerifyEmailFailed) {
       return verifyResult;
     }
@@ -57,6 +70,37 @@ export class UserService {
     const refreshToken = JwtGenerator.refreshToken();
     await TokenRepository.saveRefreshToken(username, refreshToken);
 
+    const logFactory: LogFactory = new LoginLogFactory();
+    const log = logFactory.create(user);
+    await LogRepository.save(log);
+
     return new LoginResponse.Login(accessToken, refreshToken);
+  }
+
+  static async regenerateAccessToken({
+    accessToken,
+    refreshToken,
+  }: RefreshRequest): Promise<typeof RefreshResult> {
+    const decodedAccessToken = JwtValidator.decode(accessToken);
+    if (!decodedAccessToken) {
+      return new RefreshResponse.InvalidRefreshToken();
+    }
+
+    const storedRefreshToken = await TokenRepository.findByUsername(
+      (decodedAccessToken as JwtPayload).username
+    );
+    if (storedRefreshToken !== refreshToken) {
+      return new RefreshResponse.InvalidRefreshToken();
+    }
+
+    const decodedRefreshToken = JwtValidator.verify(refreshToken);
+    if (!decodedRefreshToken) {
+      return new RefreshResponse.InvalidRefreshToken();
+    }
+
+    const regeneratedAccessToken = JwtGenerator.accessToken(
+      decodedAccessToken as JwtPayload
+    );
+    return new RefreshResponse.Refresh(regeneratedAccessToken);
   }
 }

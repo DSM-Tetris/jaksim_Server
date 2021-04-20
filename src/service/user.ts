@@ -1,7 +1,7 @@
 import {
   SignupRequest,
   SignupResult,
-  SuccessSignup,
+  SignupResponse,
   AlreadyUserExists,
   VerifyEmailFailed,
   LoginRequest,
@@ -24,7 +24,7 @@ export class UserService {
 
     const user = await UserRepository.findByEmail(data.email);
     if (user) {
-      return new AlreadyUserExists();
+      return new SignupResponse.AlreadyUserExists();
     }
     
     const verifyResult = await EmailService.verifyAuthCode(data.email, data.authCode);
@@ -35,7 +35,7 @@ export class UserService {
     data.password = await PasswordService.encryptPassword(data.password);
     await UserRepository.save(data.toUserEntity());
 
-    return new SuccessSignup();
+    return new SignupResponse.SuccessSignup();
   }
 
   static async login({

@@ -2,8 +2,7 @@ import {
   SignupRequest,
   SignupResult,
   SignupResponse,
-  AlreadyUserExists,
-  VerifyEmailFailed,
+  VerifyEmailResponse,
   LoginRequest,
   LoginResult,
   Login,
@@ -28,7 +27,7 @@ export class UserService {
     }
     
     const verifyResult = await EmailService.verifyAuthCode(data.email, data.authCode);
-    if (verifyResult instanceof VerifyEmailFailed) {
+    if (verifyResult instanceof VerifyEmailResponse.VerifyEmailFailed) {
       return verifyResult;
     }
 

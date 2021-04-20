@@ -1,16 +1,41 @@
 import {
+  GetPostsRequest,
+  GetPostsResult,
   GetPostRequest,
   GetPostResult,
-  GetPost,
-  ForbiddenPost,
-  NotFoundPost,
+  GetPostsResponse,
+  GetPostResponse,
 } from "../dto";
-import { getPostSchema } from "../schema";
+import { getPostsSchema, getPostSchema } from "../schema";
 import { validateArguments } from "../util";
 import { context } from "../context";
 import { PostRepository, TagRepository } from "../repository";
 
 export class PostService {
+  static async getPosts({ page }: GetPostsRequest): Promise<typeof GetPostsResult> {
+    const username = context.decoded["username"];
+
+    const validateArgumentResult = await validateArguments({ username, page }, getPostsSchema);
+    if (validateArgumentResult) {
+      throw validateArgumentResult;
+    }
+
+    const posts = await PostRepository.findManyByUsername(username, page);
+    const response: GetPostsResponse.PostPreview[] = [];
+
+    for (const post of posts) {
+      const tags = await TagRepository.findByPostId(post.id);
+      response.push(new GetPostsResponse.PostPreview(
+        post.title,
+        post.content ? post.content.slice(0, 100) : null,
+        post.image,
+        tags
+      ));
+    }
+
+    return posts.length ? new GetPostsResponse.GetPosts(response) : new GetPostsResponse.NotFoundAnyPost();
+  }
+
   static async getPost({ postId }: GetPostRequest): Promise<typeof GetPostResult> {
     const username = context.decoded["username"];
 

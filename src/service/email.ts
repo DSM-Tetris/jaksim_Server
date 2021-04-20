@@ -3,7 +3,7 @@ import config from "../config";
 import { transporter } from "../config/email";
 import {
   SendEmailResult,
-  SendEmailSuccess,
+  SendEmailResponse,
   VerifyEmailResult,
   VerifyEmailSuccess,
   VerifyEmailFailed,
@@ -22,7 +22,7 @@ export class EmailService {
     }
 
     if (await this.sendMail(email)) {
-      return new SendEmailSuccess();
+      return new SendEmailResponse.SendEmailSuccess();
     }
     throw new ApolloError("Internal Server Error");
   }

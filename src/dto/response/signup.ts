@@ -3,6 +3,11 @@ import { IsEmail, Length } from "class-validator";
 import { User } from "../../entity";
 import { VerifyEmailResponse } from "./verifyEmail";
 
+enum SignupMessage {
+  SuccessSignup = "USER CREATED",
+  AlreadyUserExists = "ALREADY USER EXISTS"
+}
+
 export namespace SignupResponse {
   @ObjectType()
   export class Signup {
@@ -29,11 +34,6 @@ export namespace SignupResponse {
     }
   }
   
-  enum SignupMessage {
-    SuccessSignup = "USER CREATED",
-    AlreadyUserExists = "ALREADY USER EXISTS"
-  }
-  
   @ObjectType()
   export class SuccessSignup {
     constructor() {
@@ -53,25 +53,27 @@ export namespace SignupResponse {
     @Field()
     message!: string;
   }
-  
-  export const SignupResult = createUnionType({
-    name: "SignupResult",
-    types: () => [SuccessSignup, AlreadyUserExists, VerifyEmailResponse.VerifyEmailFailed] as const,
-    resolveType: args => {
-      switch (args.message) {
-        case SignupMessage.SuccessSignup: {
-          return SuccessSignup;
-        }
-        case SignupMessage.AlreadyUserExists: {
-          return AlreadyUserExists;
-        }
-        case VerifyEmailResponse.VerifyEmailFailed.getMessage(): {
-          return VerifyEmailResponse.VerifyEmailFailed;
-        }
-        default: {
-          return undefined;
-        }
+}
+
+const { SuccessSignup, AlreadyUserExists } = SignupResponse;
+
+export const SignupResult = createUnionType({
+  name: "SignupResult",
+  types: () => [SuccessSignup, AlreadyUserExists, VerifyEmailResponse.VerifyEmailFailed] as const,
+  resolveType: args => {
+    switch (args.message) {
+      case SignupMessage.SuccessSignup: {
+        return SuccessSignup;
+      }
+      case SignupMessage.AlreadyUserExists: {
+        return AlreadyUserExists;
+      }
+      case VerifyEmailResponse.VerifyEmailFailed.getMessage(): {
+        return VerifyEmailResponse.VerifyEmailFailed;
+      }
+      default: {
+        return undefined;
       }
     }
-  });
-}
+  }
+});

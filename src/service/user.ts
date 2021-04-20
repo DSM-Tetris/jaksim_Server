@@ -5,8 +5,7 @@ import {
   VerifyEmailResponse,
   LoginRequest,
   LoginResult,
-  Login,
-  InvalidLoginInfo,
+  LoginResponse,
 } from "../dto";
 import { TokenRepository, UserRepository } from "../repository";
 import { PasswordService } from "./password";
@@ -43,7 +42,7 @@ export class UserService {
   }: LoginRequest): Promise<typeof LoginResult> {
     const user = await UserRepository.findByUsername(username);
     if (!user) {
-      return new InvalidLoginInfo();
+      return new LoginResponse.InvalidLoginInfo();
     }
 
     const isPasswordMatched = await PasswordService.match(
@@ -51,13 +50,13 @@ export class UserService {
       user.password
     );
     if (!isPasswordMatched) {
-      return new InvalidLoginInfo();
+      return new LoginResponse.InvalidLoginInfo();
     }
 
     const accessToken = JwtGenerator.accessToken({ username });
     const refreshToken = JwtGenerator.refreshToken();
     await TokenRepository.saveRefreshToken(username, refreshToken);
 
-    return new Login(accessToken, refreshToken);
+    return new LoginResponse.Login(accessToken, refreshToken);
   }
 }

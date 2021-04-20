@@ -5,8 +5,7 @@ import {
   SendEmailResult,
   SendEmailResponse,
   VerifyEmailResult,
-  VerifyEmailSuccess,
-  VerifyEmailFailed,
+  VerifyEmailResponse,
 } from "../dto";
 import { generateEmailAuthKey, validateArguments } from "../util";
 import { EmailRepository } from "../repository";
@@ -33,9 +32,9 @@ export class EmailService {
   ): Promise<typeof VerifyEmailResult> {
     const storedAuthCode = await EmailRepository.findByEmail(email);
     if (authCode === storedAuthCode) {
-      return new VerifyEmailSuccess();
+      return new VerifyEmailResponse.VerifyEmailSuccess();
     } else {
-      return new VerifyEmailFailed();
+      return new VerifyEmailResponse.VerifyEmailFailed();
     }
   }
 

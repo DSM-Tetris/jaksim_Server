@@ -46,15 +46,15 @@ export class PostService {
 
     const post = await PostRepository.findOneByPostId(postId);
     if (!post) {
-      return new NotFoundPost();
+      return new GetPostResponse.NotFoundPost();
     }
     if (post.username !== username) {
-      return new ForbiddenPost();
+      return new GetPostResponse.ForbiddenPost();
     }
 
     const tags = await TagRepository.findByPostId(postId);
     post.tags = tags;
 
-    return new GetPost(post);
+    return new GetPostResponse.GetPost(post);
   }
 }

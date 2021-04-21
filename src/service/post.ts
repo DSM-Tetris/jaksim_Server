@@ -20,7 +20,11 @@ export class PostService {
       throw validateArgumentResult;
     }
 
-    const posts = await PostRepository.findManyByUsername(username, page);
+    const posts = await PostRepository.findManyByUsername(
+      username,
+      page,
+      categoryId ? categoryId : undefined
+    );
     const response: GetPostsResponse.PostPreview[] = [];
 
     for (const post of posts) {

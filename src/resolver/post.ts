@@ -26,6 +26,6 @@ export class PostResolver {
     @Arg("data") data: UploadPostRequest,
     @Arg("picture", () => GraphQLUpload) file: Upload
   ): Promise<typeof UploadPostResult> {
-    return PostService.uploadPost(data, file);
+    return await PostService.uploadPost(data, file);
   }
 }

@@ -51,10 +51,7 @@ export class UserService {
     return new SuccessSignup();
   }
 
-  @Validate
-  static async login(
-    @ValidOf(loginSchema) loginRequest: LoginRequest
-  ): Promise<typeof LoginResult> {
+  static async login(loginRequest: LoginRequest): Promise<typeof LoginResult> {
     const { username, password } = loginRequest;
 
     const user = await UserRepository.findByUsername(username);

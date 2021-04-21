@@ -21,7 +21,8 @@ import {
 import { LogRepository } from "../repository/log";
 import { LogFactory, LoginLogFactory } from "../entity";
 import { EmailService } from "./email";
-import { signupSchema } from "../schema";
+import { loginSchema, signupSchema } from "../schema";
+import { Validate, ValidOf } from "../decorator/validateArguments";
 
 export class UserService {
   static async signup(data: SignupRequest): Promise<typeof SignupResult> {
@@ -46,10 +47,9 @@ export class UserService {
     return new SignupResponse.SuccessSignup();
   }
 
-  static async login({
-    username,
-    password,
-  }: LoginRequest): Promise<typeof LoginResult> {
+  static async login(loginRequest: LoginRequest): Promise<typeof LoginResult> {
+    const { username, password } = loginRequest;
+
     const user = await UserRepository.findByUsername(username);
     if (!user) {
       return new LoginResponse.InvalidLoginInfo();
@@ -68,7 +68,7 @@ export class UserService {
     await TokenRepository.saveRefreshToken(username, refreshToken);
 
     const logFactory: LogFactory = new LoginLogFactory();
-    const log = logFactory.create(user);
+    const log = logFactory.create(user.username);
     await LogRepository.save(log);
 
     return new LoginResponse.Login(accessToken, refreshToken);

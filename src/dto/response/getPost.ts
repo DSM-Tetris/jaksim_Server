@@ -1,5 +1,6 @@
 import { ObjectType, Field, createUnionType } from "type-graphql";
 import { Post } from "../../entity";
+import { BadRequest } from "./badRequest";
 import { Unauthorized } from "./unauthorized";
 
 enum GetPostMessage {
@@ -50,11 +51,14 @@ const { GetPost, ForbiddenPost, NotFoundPost } = GetPostResponse;
 
 export const GetPostResult = createUnionType({
   name: "GetPostResult",
-  types: () => [GetPost, Unauthorized, ForbiddenPost, NotFoundPost] as const,
+  types: () => [GetPost, BadRequest, Unauthorized, ForbiddenPost, NotFoundPost] as const,
   resolveType: args => {
     switch (args.message) {
       case GetPostMessage.SuccessGetPost: {
         return GetPost;
+      }
+      case BadRequest.getMessage(): {
+        return BadRequest;
       }
       case Unauthorized.getMessage(): {
         return Unauthorized;

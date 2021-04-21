@@ -16,7 +16,7 @@ export class PostRepository {
       take: 10,
       orderBy: {
         createdAt: "desc",
-      }
+      },
     });
   }
 
@@ -25,4 +25,24 @@ export class PostRepository {
       where: { id: postId }
     });
   }
+
+  static async save({
+    username,
+    title,
+    content,
+    categoryId,
+    image,
+  }: Post): Promise<void> {
+    await context.prisma.post.create({
+      data: {
+        username: username,
+        title,
+        content,
+        categoryId: categoryId!,
+        image,
+        createdAt: new Date(),
+      },
+    });
+  }
+}
 }

@@ -1,6 +1,7 @@
 import { Field, ObjectType, createUnionType } from "type-graphql";
 import { IsEmail, Length } from "class-validator";
 import { User } from "../../entity";
+import { BadRequest } from "./badRequest";
 import { VerifyEmailResponse } from "./verifyEmail";
 
 enum SignupMessage {
@@ -59,11 +60,14 @@ const { SuccessSignup, AlreadyUserExists } = SignupResponse;
 
 export const SignupResult = createUnionType({
   name: "SignupResult",
-  types: () => [SuccessSignup, AlreadyUserExists, VerifyEmailResponse.VerifyEmailFailed] as const,
+  types: () => [SuccessSignup, BadRequest, AlreadyUserExists, VerifyEmailResponse.VerifyEmailFailed] as const,
   resolveType: args => {
     switch (args.message) {
       case SignupMessage.SuccessSignup: {
         return SuccessSignup;
+      }
+      case BadRequest.getMessage(): {
+        return BadRequest;
       }
       case SignupMessage.AlreadyUserExists: {
         return AlreadyUserExists;

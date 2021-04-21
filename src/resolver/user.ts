@@ -5,17 +5,17 @@ import {
   SignupResult,
   SendEmailResult,
   LoginResult,
-  LoginRequest
+  LoginRequest,
 } from "../dto";
 import { UserService, EmailService } from "../service";
 import { RefreshResult, RefreshRequest } from "../dto";
+import { Validate, ValidOf } from "../decorator/validateArguments";
+import { loginSchema } from "../schema";
 
 @Resolver(User)
 export class UserResolver {
   @Mutation(() => SignupResult)
-  async signup(
-    @Arg("data") data: SignupRequest
-  ): Promise<typeof SignupResult> {
+  async signup(@Arg("data") data: SignupRequest): Promise<typeof SignupResult> {
     return await UserService.signup(data);
   }
 
@@ -26,8 +26,11 @@ export class UserResolver {
     return await EmailService.sendVerificationEmail(email);
   }
 
+  @Validate
   @Mutation(() => LoginResult)
-  async login(@Arg("data") data: LoginRequest): Promise<typeof LoginResult> {
+  async login(
+    @Arg("data") @ValidOf(loginSchema) data: LoginRequest
+  ): Promise<typeof LoginResult> {
     return await UserService.login(data);
   }
 

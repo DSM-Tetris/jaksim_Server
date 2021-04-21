@@ -16,10 +16,7 @@ export class EmailService {
   static async sendVerificationEmail(
     email: string
   ): Promise<typeof SendEmailResult> {
-    const validateArgumentResult = await validateArguments(email, emailSchema);
-    if (validateArgumentResult) {
-      throw validateArgumentResult;
-    }
+    await validateArguments(email, emailSchema);
 
     if (await this.sendMail(email)) {
       return new SendEmailSuccess();

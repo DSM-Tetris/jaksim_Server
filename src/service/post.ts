@@ -13,12 +13,7 @@ import { PostRepository, TagRepository } from "../repository";
 export class PostService {
   static async getPosts({ page, categoryId }: GetPostsRequest): Promise<typeof GetPostsResult> {
     const username = context.decoded["username"];
-    categoryId = categoryId ? categoryId : undefined;
-
-    const validateArgumentResult = await validateArguments({ username, page, categoryId }, getPostsSchema);
-    if (validateArgumentResult) {
-      throw validateArgumentResult;
-    }
+    await validateArguments({ username, page, categoryId }, getPostsSchema);
 
     const posts = await PostRepository.findManyByUsername(username, page, categoryId);
     const response: PostPreview[] = [];

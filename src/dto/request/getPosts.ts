@@ -9,5 +9,5 @@ export class GetPostsRequest {
 
   @Field(type => Int, { nullable: true })
   @Min(1)
-  categoryId?: number | null;
+  categoryId?: number;
 }

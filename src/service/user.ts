@@ -17,10 +17,7 @@ import { signupSchema } from "../schema";
 
 export class UserService {
   static async signup(data: SignupRequest): Promise<typeof SignupResult> {
-    const validateArgumentsResult = await validateArguments(data, signupSchema);
-    if (validateArgumentsResult) {
-      throw validateArgumentsResult;
-    }
+    await validateArguments(data, signupSchema);
 
     const user = await UserRepository.findByEmail(data.email);
     if (user) {

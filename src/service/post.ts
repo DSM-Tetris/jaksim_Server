@@ -14,12 +14,8 @@ import { PostRepository, TagRepository } from "../repository";
 export class PostService {
   static async getPosts({ page, categoryId }: GetPostsRequest): Promise<typeof GetPostsResult> {
     const username = context.decoded["username"];
-    categoryId = categoryId ? categoryId : undefined;
 
-    const validateArgumentResult = await validateArguments({ username, page, categoryId }, getPostsSchema);
-    if (validateArgumentResult) {
-      throw validateArgumentResult;
-    }
+    await validateArguments({ username, page, categoryId }, getPostsSchema);
 
     const posts = await PostRepository.findManyByUsername(username, page, categoryId);
     const response: GetPostsResponse.PostPreview[] = [];
@@ -40,10 +36,7 @@ export class PostService {
   static async getPost({ postId }: GetPostRequest): Promise<typeof GetPostResult> {
     const username = context.decoded["username"];
 
-    const validateArgumentResult = await validateArguments({ username, postId }, getPostSchema);
-    if (validateArgumentResult) {
-      throw validateArgumentResult;
-    }
+    await validateArguments({ postId }, getPostSchema);
 
     const post = await PostRepository.findOneByPostId(postId);
     if (!post) {

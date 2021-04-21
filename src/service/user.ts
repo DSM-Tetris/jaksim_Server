@@ -51,9 +51,10 @@ export class UserService {
     return new SuccessSignup();
   }
 
-  static async login(loginRequest: LoginRequest): Promise<typeof LoginResult> {
-    const { username, password } = loginRequest;
-
+  @Validate
+  static async login(
+    @ValidOf(loginSchema) { username, password }: LoginRequest
+  ): Promise<typeof LoginResult> {
     const user = await UserRepository.findByUsername(username);
     if (!user) {
       return new LoginResponse.InvalidLoginInfo();

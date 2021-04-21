@@ -49,7 +49,7 @@ export const LoginResult = createUnionType({
       case LoginMessage.InvalidLoginInfo: {
         return InvalidLoginInfo;
       }
-      case "BAD REQUEST": {
+      case BadRequest.getMessage(): {
         return BadRequest;
       }
       default: {

@@ -12,10 +12,10 @@ import { context } from "../context";
 import { PostRepository, TagRepository } from "../repository";
 
 export class PostService {
-  static async getPosts({ page }: GetPostsRequest): Promise<typeof GetPostsResult> {
+  static async getPosts({ page, categoryId }: GetPostsRequest): Promise<typeof GetPostsResult> {
     const username = context.decoded["username"];
 
-    const validateArgumentResult = await validateArguments({ username, page }, getPostsSchema);
+    const validateArgumentResult = await validateArguments({ username, page, categoryId }, getPostsSchema);
     if (validateArgumentResult) {
       throw validateArgumentResult;
     }

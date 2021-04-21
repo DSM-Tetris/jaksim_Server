@@ -11,15 +11,16 @@ import { context } from "../context";
 import { PostRepository, TagRepository } from "../repository";
 
 export class PostService {
-  static async getPosts({ page }: GetPostsRequest): Promise<typeof GetPostsResult> {
+  static async getPosts({ page, categoryId }: GetPostsRequest): Promise<typeof GetPostsResult> {
     const username = context.decoded["username"];
+    categoryId = categoryId ? categoryId : undefined;
 
-    const validateArgumentResult = await validateArguments({ username, page }, getPostsSchema);
+    const validateArgumentResult = await validateArguments({ username, page, categoryId }, getPostsSchema);
     if (validateArgumentResult) {
       throw validateArgumentResult;
     }
 
-    const posts = await PostRepository.findManyByUsername(username, page);
+    const posts = await PostRepository.findManyByUsername(username, page, categoryId);
     const response: PostPreview[] = [];
 
     for (const post of posts) {

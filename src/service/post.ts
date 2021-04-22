@@ -14,10 +14,9 @@ import path from "path";
 import { getPostsSchema } from "../schema";
 import { validateArguments } from "../util";
 import { context } from "../context";
-import { PostRepository, TagRepository } from "../repository";
+import { PostRepository, TagRepository, LogRepository } from "../repository";
 import { ImageNameGenerator } from "../util/imageNameGenerator";
 import { LogFactory, PostingLogFactory } from "../entity";
-import { LogRepository } from "../repository/log";
 
 export class PostService {
   static async getPosts({

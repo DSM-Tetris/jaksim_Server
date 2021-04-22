@@ -11,7 +11,7 @@ import {
   RefreshResult,
   RefreshRequest,
 } from "../dto";
-import { TokenRepository, UserRepository } from "../repository";
+import { TokenRepository, UserRepository, LogRepository } from "../repository";
 import { PasswordService } from "./password";
 import {
   JwtGenerator,
@@ -19,7 +19,6 @@ import {
   JwtValidator,
   validateArguments,
 } from "../util";
-import { LogRepository } from "../repository/log";
 import { LogFactory, LoginLogFactory } from "../entity";
 import { EmailService } from "./email";
 import { loginSchema, signupSchema } from "../schema";

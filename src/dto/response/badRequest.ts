@@ -6,6 +6,10 @@ export class BadRequest {
     this.message = "BAD REQUEST";
   }
 
+  static getMessage(): string {
+    return "BAD REQUEST";
+  }
+
   @Field()
   message: string;
 }

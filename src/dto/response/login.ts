@@ -1,4 +1,5 @@
 import { createUnionType, Field, ObjectType } from "type-graphql";
+import { BadRequest } from "./badRequest";
 
 enum LoginMessage {
   SuccessLogin = "LOGIN SUCCESSFULLY COMPLETE",
@@ -39,7 +40,7 @@ const { Login, InvalidLoginInfo } = LoginResponse;
 
 export const LoginResult = createUnionType({
   name: "LoginResult",
-  types: () => [Login, InvalidLoginInfo] as const,
+  types: () => [Login, InvalidLoginInfo, BadRequest] as const,
   resolveType: (args) => {
     switch (args.message) {
       case LoginMessage.SuccessLogin: {
@@ -47,6 +48,9 @@ export const LoginResult = createUnionType({
       }
       case LoginMessage.InvalidLoginInfo: {
         return InvalidLoginInfo;
+      }
+      case BadRequest.getMessage(): {
+        return BadRequest;
       }
       default: {
         return undefined;

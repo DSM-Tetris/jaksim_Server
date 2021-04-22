@@ -1,14 +1,45 @@
-import { Resolver, Query, UseMiddleware, Arg } from "type-graphql";
-import { GetPostsRequest, GetPostsResult } from "../dto";
+import { Resolver, Query, UseMiddleware, Arg, Mutation } from "type-graphql";
 import { Post } from "../entity";
+import { GraphQLUpload } from "graphql-upload";
+import {
+  GetPostsRequest,
+  GetPostsResult,
+  UploadPostResult,
+  UploadPostRequest,
+  GetPostResult,
+  GetPostRequest,
+} from "../dto";
 import { auth } from "../middleware";
-import { PostService } from "../service/post";
+import { PostService } from "../service";
+import { Upload } from "../type";
+import { Validate, ValidOf } from "../decorator/validateArguments";
+import { getPostsSchema, getPostSchema } from "../schema";
 
 @Resolver(Post)
 export class PostResolver {
+  @Validate
   @Query(() => GetPostsResult)
   @UseMiddleware(auth)
-  async getPosts(@Arg("data") data: GetPostsRequest): Promise<typeof GetPostsResult> {
+  async getPosts(
+    @Arg("data") @ValidOf(getPostsSchema) data: GetPostsRequest
+  ): Promise<typeof GetPostsResult> {
     return await PostService.getPosts(data);
+  }
+
+  @Mutation(() => UploadPostResult)
+  async uploadPost(
+    @Arg("data") data: UploadPostRequest,
+    @Arg("picture", () => GraphQLUpload) file: Upload
+  ): Promise<typeof UploadPostResult> {
+    return await PostService.uploadPost(data, file);
+  }
+
+  @Validate
+  @Query(() => GetPostResult)
+  @UseMiddleware(auth)
+  async getPost(
+    @Arg("data") @ValidOf(getPostSchema) data: GetPostRequest
+  ): Promise<typeof GetPostResult> {
+    return await PostService.getPost(data);
   }
 }

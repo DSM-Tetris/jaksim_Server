@@ -9,7 +9,32 @@ export class PostRepository {
       where: { username },
       orderBy: {
         createdAt: "desc",
-      }
+      },
+    });
+  }
+
+  static async findOneByPostId(postId: number): Promise<Post | null> {
+    return await context.prisma.post.findUnique({
+      where: { id: postId }
+    });
+  }
+
+  static async save({
+    username,
+    title,
+    content,
+    categoryId,
+    image,
+  }: Post): Promise<void> {
+    await context.prisma.post.create({
+      data: {
+        username: username,
+        title,
+        content,
+        categoryId: categoryId!,
+        image,
+        createdAt: new Date(),
+      },
     });
   }
 }

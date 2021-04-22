@@ -1,23 +1,21 @@
-import { User } from "./user";
-import { Log } from "./log";
-import { LogType } from "./logType";
+import { Log, LogType } from "./log";
 
 export abstract class LogFactory {
-  public readonly create = (user: User) => {
-    return this.createLog(user);
+  public readonly create = (username: string) => {
+    return this.createLog(username);
   };
 
-  protected abstract createLog(user: User): Log;
+  protected abstract createLog(username: string): Log;
 }
 
 export class LoginLogFactory extends LogFactory {
-  protected createLog(user: User): Log {
-    return new Log(new Date(), LogType.LOGIN, user);
+  protected createLog(username: string): Log {
+    return new Log(new Date(), LogType.LOGIN, username);
   }
 }
 
 export class PostingLogFactory extends LogFactory {
-  protected createLog(user: User): Log {
-    return new Log(new Date(), LogType.POSTING, user);
+  protected createLog(username: string): Log {
+    return new Log(new Date(), LogType.POSTING, username);
   }
 }

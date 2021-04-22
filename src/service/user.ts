@@ -2,9 +2,8 @@ import {
   LoginResponse,
   RefreshResponse,
   SignupResult,
-  SuccessSignup,
-  AlreadyUserExists,
-  VerifyEmailFailed,
+  SignupResponse,
+  VerifyEmailResponse,
   LoginRequest,
   SignupRequest,
   LoginResult,
@@ -22,38 +21,35 @@ import {
 import { LogRepository } from "../repository/log";
 import { LogFactory, LoginLogFactory } from "../entity";
 import { EmailService } from "./email";
-import { signupSchema } from "../schema";
+import { loginSchema, signupSchema } from "../schema";
+import { Validate, ValidOf } from "../decorator/validateArguments";
 
 export class UserService {
   static async signup(data: SignupRequest): Promise<typeof SignupResult> {
-    const validateArgumentsResult = await validateArguments(data, signupSchema);
-    if (validateArgumentsResult) {
-      throw validateArgumentsResult;
-    }
+    await validateArguments(data, signupSchema);
 
     const user = await UserRepository.findByEmail(data.email);
     if (user) {
-      return new AlreadyUserExists();
+      return new SignupResponse.AlreadyUserExists();
     }
 
     const verifyResult = await EmailService.verifyAuthCode(
       data.email,
       data.authCode
     );
-    if (verifyResult instanceof VerifyEmailFailed) {
+    if (verifyResult instanceof VerifyEmailResponse.VerifyEmailFailed) {
       return verifyResult;
     }
 
     data.password = await PasswordService.encryptPassword(data.password);
     await UserRepository.save(data.toUserEntity());
 
-    return new SuccessSignup();
+    return new SignupResponse.SuccessSignup();
   }
 
-  static async login({
-    username,
-    password,
-  }: LoginRequest): Promise<typeof LoginResult> {
+  static async login(loginRequest: LoginRequest): Promise<typeof LoginResult> {
+    const { username, password } = loginRequest;
+
     const user = await UserRepository.findByUsername(username);
     if (!user) {
       return new LoginResponse.InvalidLoginInfo();
@@ -72,7 +68,7 @@ export class UserService {
     await TokenRepository.saveRefreshToken(username, refreshToken);
 
     const logFactory: LogFactory = new LoginLogFactory();
-    const log = logFactory.create(user);
+    const log = logFactory.create(user.username);
     await LogRepository.save(log);
 
     return new LoginResponse.Login(accessToken, refreshToken);

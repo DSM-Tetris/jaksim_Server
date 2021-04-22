@@ -17,6 +17,7 @@ import { validateArguments, ImageNameGenerator } from "../util";
 import { context } from "../context";
 import { PostRepository, TagRepository, LogRepository } from "../repository";
 import { LogFactory, PostingLogFactory } from "../entity";
+import { CategoryRepository } from "../repository/category";
 
 export class PostService {
   static async getPosts({
@@ -76,6 +77,12 @@ export class PostService {
     file: Upload
   ): Promise<typeof UploadPostResult> {
     const username = context.decoded["username"];
+
+    const category = await CategoryRepository.findById(data.categoryId);
+    if (!category || category?.username !== username) {
+      return new UploadPostResponse.CategoryNotFound();
+    }
+
     const imageName = await this.uploadImage(file);
 
     await this.savePostingLog(username);

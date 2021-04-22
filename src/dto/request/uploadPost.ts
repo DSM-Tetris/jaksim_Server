@@ -10,10 +10,13 @@ export class UploadPostRequest {
 
   @Field()
   @Length(1, 300)
-  content!: string;  // undefined
+  content!: string; // undefined
 
   @Field()
   categoryId!: number;
+
+  @Field(() => [String])
+  tagNames?: string[];
 
   toPostEntity(username: string, imageName: string) {
     return new Post(

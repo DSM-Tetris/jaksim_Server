@@ -11,8 +11,11 @@ export class Category {
   name!: string;
 
   @Field(type => User)
-  user!: User;
+  user?: User;
+
+  @Field()
+  username!: string;
 
   @Field(type => [Post], { nullable: true })
-  posts!: [Post] | null;
+  posts?: Post[] | null;
 }

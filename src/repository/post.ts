@@ -5,34 +5,32 @@ export class PostRepository {
   static async findManyByUsername(
     username: string,
     page: number,
-    categoryId?: number,
+    categoryId?: number
   ): Promise<Post[]> {
     return await context.prisma.post.findMany({
       where: {
         username,
-        categoryId
+        categoryId,
       },
-      skip: (page - 1) * 10,
-      take: 10,
       orderBy: {
         createdAt: "desc",
       },
+      skip: (page - 1) * 10,
+      take: 10,
     });
   }
 
   static async findOneByPostId(postId: number): Promise<Post | null> {
     return await context.prisma.post.findUnique({
-      where: { id: postId }
+      where: { id: postId },
     });
   }
 
-  static async save({
-    username,
-    title,
-    content,
-    categoryId,
-    image,
-  }: Post): Promise<void> {
+  static async saveWithTags(
+    { username, title, content, categoryId, image }: Post,
+    tagNames: string[] = []
+  ): Promise<void> {
+    const now = new Date();
     await context.prisma.post.create({
       data: {
         username: username,
@@ -40,9 +38,14 @@ export class PostRepository {
         content,
         categoryId: categoryId!,
         image,
-        createdAt: new Date(),
+        createdAt: now,
+        tags: {
+          create: tagNames.map((tagName) => ({
+            tagName,
+            createdAt: now,
+          })),
+        },
       },
     });
   }
-}
 }

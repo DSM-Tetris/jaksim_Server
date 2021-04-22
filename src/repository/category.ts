@@ -7,4 +7,12 @@ export class CategoryRepository {
       where: { username },
     });
   }
+
+  static findById(id: number): Promise<Category | null> {
+    return context.prisma.category.findUnique({
+      where: {
+        id,
+      },
+    });
+  }
 }

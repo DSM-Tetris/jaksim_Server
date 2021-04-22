@@ -1,4 +1,4 @@
-import { Arg, Mutation, Query, Resolver } from "type-graphql";
+import { Arg, Mutation, Resolver } from "type-graphql";
 import { User } from "../entity";
 import {
   SignupRequest,
@@ -10,21 +10,22 @@ import {
 import { UserService, EmailService } from "../service";
 import { RefreshResult, RefreshRequest } from "../dto";
 import { Validate, ValidOf } from "../decorator/validateArguments";
-import { loginSchema } from "../schema";
+import { loginSchema, signupSchema, emailSchema } from "../schema";
 
 @Resolver(User)
 export class UserResolver {
-  @Query(() => User)
-  async getUser() {}
-
+  @Validate
   @Mutation(() => SignupResult)
-  async signup(@Arg("data") data: SignupRequest): Promise<typeof SignupResult> {
+  async signup(
+    @Arg("data") @ValidOf(signupSchema) data: SignupRequest
+  ): Promise<typeof SignupResult> {
     return await UserService.signup(data);
   }
 
+  @Validate
   @Mutation(() => SendEmailResult)
   async sendVerificationEmail(
-    @Arg("email") email: string
+    @Arg("email") @ValidOf(emailSchema) email: string
   ): Promise<typeof SendEmailResult> {
     return await EmailService.sendVerificationEmail(email);
   }

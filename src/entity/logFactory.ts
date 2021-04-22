@@ -1,4 +1,3 @@
-import { User } from "./user";
 import { Log, LogType } from "./log";
 
 export abstract class LogFactory {

@@ -5,29 +5,33 @@ enum VerifyEmailMessage {
   Fail = "EMAIL VERIFICATION FAIL"
 }
 
-@ObjectType()
-export class VerifyEmailSuccess {
-  constructor() {
-    this.message = VerifyEmailMessage.Success;
+export namespace VerifyEmailResponse {
+  @ObjectType()
+  export class VerifyEmailSuccess {
+    constructor() {
+      this.message = VerifyEmailMessage.Success;
+    }
+  
+    @Field()
+    message!: string;
   }
-
-  @Field()
-  message!: string;
+  
+  @ObjectType()
+  export class VerifyEmailFailed {
+    constructor() {
+      this.message = VerifyEmailMessage.Fail;
+    }
+  
+    @Field()
+    message!: string;
+  
+    static getMessage(): string {
+      return VerifyEmailMessage.Fail;
+    }
+  }
 }
 
-@ObjectType()
-export class VerifyEmailFailed {
-  constructor() {
-    this.message = VerifyEmailMessage.Fail;
-  }
-
-  @Field()
-  message!: string;
-
-  static getMessage(): string {
-    return VerifyEmailMessage.Fail;
-  }
-}
+const { VerifyEmailSuccess, VerifyEmailFailed } = VerifyEmailResponse;
 
 export const VerifyEmailResult = createUnionType({
   name: "VerifyEmailResult",

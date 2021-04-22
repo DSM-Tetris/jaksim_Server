@@ -1,13 +1,13 @@
 import { Schema } from "joi";
-import { BadRequest } from "../dto";
+import { UserInputError } from "apollo-server";
 
 export const validateArguments = async (
   data,
   schema: Schema
-): Promise<void | BadRequest> => {
+): Promise<void> => {
   try {
     await schema.validateAsync(data);
   } catch (error) {
-    return new BadRequest();
+    throw new UserInputError("BAD REQUEST");
   }
 };

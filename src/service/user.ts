@@ -2,9 +2,8 @@ import {
   LoginResponse,
   RefreshResponse,
   SignupResult,
-  SuccessSignup,
-  AlreadyUserExists,
-  VerifyEmailFailed,
+  SignupResponse,
+  VerifyEmailResponse,
   LoginRequest,
   SignupRequest,
   LoginResult,
@@ -27,28 +26,25 @@ import { Validate, ValidOf } from "../decorator/validateArguments";
 
 export class UserService {
   static async signup(data: SignupRequest): Promise<typeof SignupResult> {
-    const validateArgumentsResult = await validateArguments(data, signupSchema);
-    if (validateArgumentsResult) {
-      throw validateArgumentsResult;
-    }
+    await validateArguments(data, signupSchema);
 
     const user = await UserRepository.findByEmail(data.email);
     if (user) {
-      return new AlreadyUserExists();
+      return new SignupResponse.AlreadyUserExists();
     }
 
     const verifyResult = await EmailService.verifyAuthCode(
       data.email,
       data.authCode
     );
-    if (verifyResult instanceof VerifyEmailFailed) {
+    if (verifyResult instanceof VerifyEmailResponse.VerifyEmailFailed) {
       return verifyResult;
     }
 
     data.password = await PasswordService.encryptPassword(data.password);
     await UserRepository.save(data.toUserEntity());
 
-    return new SuccessSignup();
+    return new SignupResponse.SuccessSignup();
   }
 
   static async login(loginRequest: LoginRequest): Promise<typeof LoginResult> {

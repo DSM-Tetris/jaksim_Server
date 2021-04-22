@@ -1,35 +1,47 @@
-import { Resolver, Mutation, Arg, Query } from "type-graphql";
+import { Arg, Mutation, Resolver } from "type-graphql";
 import { User } from "../entity";
-import { SignupRequest, GetOneUserRequest, HttpResponse, GetOneUserResponse } from "../dto";
-import { PasswordService, UserService } from "../service";
-import { UserInputError } from "apollo-server";
+import {
+  SignupRequest,
+  SignupResult,
+  SendEmailResult,
+  LoginResult,
+  LoginRequest,
+} from "../dto";
+import { UserService, EmailService } from "../service";
+import { RefreshResult, RefreshRequest } from "../dto";
+import { Validate, ValidOf } from "../decorator/validateArguments";
+import { loginSchema, signupSchema, emailSchema } from "../schema";
 
 @Resolver(User)
 export class UserResolver {
-  @Mutation(() => HttpResponse)
+  @Validate
+  @Mutation(() => SignupResult)
   async signup(
-    @Arg("data") data: SignupRequest,
-  ): Promise<HttpResponse> {
-    const user = await UserService.getOneUser({ username: data.username });
-    if (user) {
-      throw new UserInputError("User Already Exists", {
-        status: 409
-      });
-    }
-
-    data.password = PasswordService.encryptPassword(data.password);
-    await UserService.signup(data);
-
-    return {
-      message: "User Created",
-      status: 201
-    };
+    @Arg("data") @ValidOf(signupSchema) data: SignupRequest
+  ): Promise<typeof SignupResult> {
+    return await UserService.signup(data);
   }
-  
-  @Query(() => User, { nullable: true })
-  async getOneUser(
-    @Arg("data") data: GetOneUserRequest
-  ): Promise<GetOneUserResponse | null> {
-    return await UserService.getOneUser(data);
+
+  @Validate
+  @Mutation(() => SendEmailResult)
+  async sendVerificationEmail(
+    @Arg("email") @ValidOf(emailSchema) email: string
+  ): Promise<typeof SendEmailResult> {
+    return await EmailService.sendVerificationEmail(email);
+  }
+
+  @Validate
+  @Mutation(() => LoginResult)
+  async login(
+    @Arg("data") @ValidOf(loginSchema) data: LoginRequest
+  ): Promise<typeof LoginResult> {
+    return await UserService.login(data);
+  }
+
+  @Mutation(() => RefreshResult)
+  async regenerateAccessToken(
+    @Arg("data") data: RefreshRequest
+  ): Promise<typeof RefreshResult> {
+    return await UserService.regenerateAccessToken(data);
   }
 }

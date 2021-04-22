@@ -1,16 +1,19 @@
+import { BadRequest } from "./dto";
+
 export const formatError = (err) => {
-  const { message, extensions } = err;
-  
-  // class-validator exception handling
-  if (message.startsWith("Argument")) {
-    return {
-      message: "Invalid Parameters",
-      status: 400
-    };
+  let { message, extensions } = err;
+  console.log(message); // TODO remove
+  console.log(extensions);
+
+  if (message.startsWith("Cannot query field")) {
+    message = "Bad Gateway";
+  }
+  else if (extensions?.code === "GRAPHQL_VALIDATION_FAILED" || message === "BAD REQUEST") {
+    return new BadRequest();
+  }
+  else {
+    message = "Internal Server Error";
   }
 
-  return {
-    message: extensions && extensions.status ? message : "Internal Server Error",
-    status: extensions && extensions.status ? extensions.status : 500
-  };
+  return { message };
 };

@@ -1,17 +1,32 @@
-import { ObjectType, Field, ID } from "type-graphql";
+import { Field, ID, ObjectType, Int } from "type-graphql";
 import { User } from "./user";
 import { Category } from "./category";
 import { Tag } from "./tag";
 
 @ObjectType()
 export class Post {
-  @Field(type => ID)
+  constructor(
+    title: string,
+    content: string,
+    image: string,
+    username: string,
+    categoryId: number
+  ) {
+    this.title = title;
+    this.content = content;
+    this.image = image;
+    this.createdAt = new Date();
+    this.username = username;
+    this.categoryId = categoryId;
+  }
+
+  @Field((type) => ID)
   readonly id!: number;
 
   @Field()
   title!: string;
 
-  @Field(type => String, { nullable: true })
+  @Field((type) => String, { nullable: true })
   content!: string | null;
 
   @Field()
@@ -20,12 +35,18 @@ export class Post {
   @Field()
   createdAt!: Date;
 
-  @Field(type => User)
-  user!: User;
+  @Field((type) => User)
+  user?: User;
 
-  @Field(type => Category, { nullable: true })
-  category!: Category | null;
+  @Field()
+  username!: string;
 
-  @Field(type => [Tag], { nullable: true })
-  tags!: [Tag] | null;
+  @Field((type) => Category, { nullable: true })
+  category?: Category | null;
+
+  @Field((type) => Int, { nullable: true })
+  categoryId!: number | null;
+
+  @Field((type) => [Tag], { nullable: true })
+  tags?: Tag[] | null;
 }

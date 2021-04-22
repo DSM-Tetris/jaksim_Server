@@ -1,10 +1,13 @@
-import { ObjectType, Field } from "type-graphql";
+import { Field, ObjectType, Int } from "type-graphql";
 import { Post } from "./post";
 
 @ObjectType()
 export class Tag {
   @Field(type => Post)
-  post!: Post;
+  post?: Post;
+
+  @Field(type => Int)
+  postId!: number;
 
   @Field()
   tagName!: string;

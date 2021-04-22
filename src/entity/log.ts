@@ -1,17 +1,34 @@
-import { ObjectType, Field, ID } from "type-graphql";
+import { Field, ID, ObjectType, registerEnumType } from "type-graphql";
 import { User } from "./user";
+
+export enum LogType {
+  LOGIN = "LOGIN",
+  POSTING = "POSTING",
+}
+registerEnumType(LogType, {
+  name: "LogType",
+});
 
 @ObjectType()
 export class Log {
-  @Field(type => ID)
+  constructor(date: Date, type: LogType, username: string) {
+    this.date = date;
+    this.type = type;
+    this.username = username;
+  }
+
+  @Field((type) => ID)
   readonly id!: number;
 
   @Field()
-  date!: Date
+  date!: Date;
+
+  @Field((type) => LogType)
+  type!: LogType;
+
+  @Field((type) => User)
+  user?: User | null;
 
   @Field()
-  type!: string;
-
-  @Field(type => User)
-  user!: User
+  username!: string;
 }

@@ -2,17 +2,15 @@ import {
   UploadPostResponse,
   UploadPostRequest,
   UploadPostResult,
-} from "../dto";
-import { Upload } from "../type";
-import { createWriteStream } from "fs";
-import path from "path";
-import {
   GetPostsRequest,
   GetPostsResult,
   PostPreview,
   GetPosts,
   NotFoundPost,
 } from "../dto";
+import { Upload } from "../type";
+import { createWriteStream } from "fs";
+import path from "path";
 import { getPostsSchema } from "../schema";
 import { validateArguments } from "../util";
 import { context } from "../context";

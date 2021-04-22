@@ -5,15 +5,19 @@ enum UploadPostMessage {
   SuccessUploadPost = "SUCCESS UPLOAD POST",
 }
 
-@ObjectType()
-export class UploadPost {
-  constructor() {
-    this.message = UploadPostMessage.SuccessUploadPost;
-  }
+export namespace UploadPostResponse {
+  @ObjectType()
+  export class UploadPost {
+    constructor() {
+      this.message = UploadPostMessage.SuccessUploadPost;
+    }
 
-  @Field()
-  message!: string;
+    @Field()
+    message!: string;
+  }
 }
+
+const { UploadPost } = UploadPostResponse;
 
 export const UploadPostResult = createUnionType({
   name: "UploadPostResult",

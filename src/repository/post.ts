@@ -2,7 +2,7 @@ import { Post } from "../entity";
 import { context } from "../context";
 
 export class PostRepository {
-  static async findManyByUsernameAndCategoryId(
+  static async findTenByUsernameAndCategoryId(
     username: string,
     page: number,
     categoryId?: number,

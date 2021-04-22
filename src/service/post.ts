@@ -23,7 +23,7 @@ export class PostService {
     const username = context.decoded["username"];
     await validateArguments({ username, page, categoryId }, getPostsSchema);
 
-    const posts = await PostRepository.findManyByUsername(username, page, categoryId);
+    const posts = await PostRepository.findTenByUsernameAndCategoryId(username, page, categoryId);
     const response: GetPostsResponse.PostPreview[] = [];
 
     for (const post of posts) {

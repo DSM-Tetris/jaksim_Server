@@ -15,5 +15,5 @@ export const uploadPostSchema = Joi.object().keys({
   title: Joi.string().min(1).max(30).required(),
   content: Joi.string().max(1).max(300).required(),
   categoryId: Joi.number().integer().optional(),
-  tagNames: Joi.array().optional(),
+  tagNames: Joi.array().length(10).optional(),
 });

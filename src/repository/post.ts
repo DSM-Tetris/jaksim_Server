@@ -44,4 +44,13 @@ export class PostRepository {
       },
     });
   }
+
+  static async findManyByUsername(username: string) {
+    return context.prisma.post.findMany({
+      where: { username },
+      include: {
+        category: true
+      }
+    });
+  }
 }

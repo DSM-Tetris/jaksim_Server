@@ -80,7 +80,10 @@ export class PostService {
 
     await this.savePostingLog(username);
 
-    await PostRepository.save(data.toPostEntity(username, imageName));
+    await PostRepository.saveWithTags(
+      data.toPostEntity(username, imageName),
+      data.tagNames
+    );
     return new UploadPostResponse.UploadPost();
   }
 

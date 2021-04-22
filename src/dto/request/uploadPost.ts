@@ -10,7 +10,7 @@ export class UploadPostRequest {
 
   @Field()
   @Length(1, 300)
-  content!: string;
+  content!: string;  // undefined
 
   @Field()
   categoryId!: number;

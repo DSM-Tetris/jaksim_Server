@@ -6,7 +6,7 @@ export class BadRequest {
     this.message = "BAD REQUEST";
   }
 
-  static getMessage() {
+  static getMessage(): string {
     return "BAD REQUEST";
   }
 

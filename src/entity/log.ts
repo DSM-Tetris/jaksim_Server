@@ -5,7 +5,6 @@ export enum LogType {
   LOGIN = "LOGIN",
   POSTING = "POSTING",
 }
-
 registerEnumType(LogType, {
   name: "LogType",
 });

@@ -18,7 +18,7 @@ export const app = async () => {
       context.token = req.headers.authorization || "";
       return context;
     },
-    // debug: false,
+    debug: false,
     cors: true,
     formatError,
   }).listen({ port: config.SERVER_PORT }, () => {

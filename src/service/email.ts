@@ -3,10 +3,9 @@ import config from "../config";
 import { transporter } from "../config/email";
 import {
   SendEmailResult,
-  SendEmailSuccess,
+  SendEmailResponse,
   VerifyEmailResult,
-  VerifyEmailSuccess,
-  VerifyEmailFailed,
+  VerifyEmailResponse,
 } from "../dto";
 import { generateEmailAuthKey, validateArguments } from "../util";
 import { EmailRepository } from "../repository";
@@ -16,13 +15,10 @@ export class EmailService {
   static async sendVerificationEmail(
     email: string
   ): Promise<typeof SendEmailResult> {
-    const validateArgumentResult = await validateArguments(email, emailSchema);
-    if (validateArgumentResult) {
-      throw validateArgumentResult;
-    }
+    await validateArguments(email, emailSchema);
 
     if (await this.sendMail(email)) {
-      return new SendEmailSuccess();
+      return new SendEmailResponse.SendEmailSuccess();
     }
     throw new ApolloError("Internal Server Error");
   }
@@ -33,9 +29,9 @@ export class EmailService {
   ): Promise<typeof VerifyEmailResult> {
     const storedAuthCode = await EmailRepository.findByEmail(email);
     if (authCode === storedAuthCode) {
-      return new VerifyEmailSuccess();
+      return new VerifyEmailResponse.VerifyEmailSuccess();
     } else {
-      return new VerifyEmailFailed();
+      return new VerifyEmailResponse.VerifyEmailFailed();
     }
   }
 

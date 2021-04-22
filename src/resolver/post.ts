@@ -13,7 +13,12 @@ import { auth } from "../middleware";
 import { PostService } from "../service";
 import { Upload } from "../type";
 import { Validate, ValidOf } from "../decorator/validateArguments";
-import { getPostsSchema, getPostSchema, uploadPostSchema } from "../schema";
+import {
+  getPostsSchema,
+  getPostSchema,
+  uploadPostSchema,
+  pictureSchema,
+} from "../schema";
 
 @Resolver(Post)
 export class PostResolver {
@@ -30,7 +35,7 @@ export class PostResolver {
   @Mutation(() => UploadPostResult)
   async uploadPost(
     @Arg("data") @ValidOf(uploadPostSchema) data: UploadPostRequest,
-    @Arg("picture", () => GraphQLUpload) file: Upload
+    @Arg("picture", () => GraphQLUpload) @ValidOf(pictureSchema) file: Upload
   ): Promise<typeof UploadPostResult> {
     return await PostService.uploadPost(data, file);
   }

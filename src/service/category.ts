@@ -1,9 +1,10 @@
 import { CategoryRepository } from "../repository/category";
-import { PostRepository } from "../repository/post";
+import { PostRepository } from "../repository";
 import { context } from "../context";
+import { GetCategoryListResult, GetCategoryListResponse } from "../dto";
 
 export class CategoryService {
-  static async getCategoryList() {
+  static async getCategoryList(): Promise<typeof GetCategoryListResult> {
     const categoryList = {};
     const username: string = context.decoded["username"];
     
@@ -30,6 +31,6 @@ export class CategoryService {
     }
     
     categoryList["전체 카테고리"] = numOfAllPost;
-    return categoryList;
+    return new GetCategoryListResponse.GetCategoryList(categoryList);
   }
 }

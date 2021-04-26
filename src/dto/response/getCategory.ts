@@ -8,9 +8,13 @@ enum GetCategoryListMessage {
 export namespace GetCategoryListResponse {
   @ObjectType()
   export class GetCategoryList {
-    constructor() {
+    constructor(categoryList: object) {
       this.message = GetCategoryListMessage.SuccessGetCategoryList;
+      this.categoryList = categoryList;
     }
+
+    @Field()
+    categoryList: object;
 
     @Field()
     message: string;

@@ -1,4 +1,5 @@
 import { ObjectType, Field, createUnionType } from "type-graphql";
+import { GraphQLJSONObject } from "graphql-type-json";
 import { Unauthorized } from "./unauthorized";
 
 enum GetCategoryListMessage {
@@ -13,7 +14,7 @@ export namespace GetCategoryListResponse {
       this.categoryList = categoryList;
     }
 
-    @Field()
+    @Field(type => GraphQLJSONObject)
     categoryList: object;
 
     @Field()

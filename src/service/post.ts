@@ -1,8 +1,8 @@
-import { UploadPost, UploadPostRequest, UploadPostResult } from "../dto";
-import { Upload } from "../type";
 import { createWriteStream } from "fs";
-import path from "path";
 import {
+  UploadPostResponse,
+  UploadPostRequest,
+  UploadPostResult,
   GetPostsRequest,
   GetPostsResult,
   GetPostRequest,
@@ -10,16 +10,20 @@ import {
   GetPostsResponse,
   GetPostResponse,
 } from "../dto";
+import { Upload } from "../type";
+import path from "path";
 import { getPostsSchema, getPostSchema } from "../schema";
-import { validateArguments } from "../util";
+import { validateArguments, ImageNameGenerator } from "../util";
 import { context } from "../context";
-import { PostRepository, TagRepository } from "../repository";
-import { ImageNameGenerator } from "../util/imageNameGenerator";
-import { Log, LogFactory, PostingLogFactory } from "../entity";
-import { LogRepository } from "../repository/log";
+import { PostRepository, TagRepository, LogRepository } from "../repository";
+import { LogFactory, PostingLogFactory } from "../entity";
+import { CategoryRepository } from "../repository/category";
 
 export class PostService {
-  static async getPosts({ page, categoryId }: GetPostsRequest): Promise<typeof GetPostsResult> {
+  static async getPosts({
+    page,
+    categoryId,
+  }: GetPostsRequest): Promise<typeof GetPostsResult> {
     const username = context.decoded["username"];
     await validateArguments({ username, page, categoryId }, getPostsSchema);
 
@@ -28,18 +32,24 @@ export class PostService {
 
     for (const post of posts) {
       const tags = await TagRepository.findByPostId(post.id);
-      response.push(new GetPostsResponse.PostPreview(
-        post.title,
-        post.content ? post.content.slice(0, 100) : null,
-        post.image,
-        tags
-      ));
+      response.push(
+        new GetPostsResponse.PostPreview(
+          post.title,
+          post.content ? post.content.slice(0, 100) : null,
+          post.image,
+          tags
+        )
+      );
     }
 
-    return posts.length ? new GetPostsResponse.GetPosts(response) : new GetPostsResponse.NotFoundAnyPost();
+    return posts.length
+      ? new GetPostsResponse.GetPosts(response)
+      : new GetPostsResponse.NotFoundAnyPost();
   }
 
-  static async getPost({ postId }: GetPostRequest): Promise<typeof GetPostResult> {
+  static async getPost({
+    postId,
+  }: GetPostRequest): Promise<typeof GetPostResult> {
     const username = context.decoded["username"];
 
     await validateArguments({ postId }, getPostSchema);
@@ -62,14 +72,22 @@ export class PostService {
     data: UploadPostRequest,
     file: Upload
   ): Promise<typeof UploadPostResult> {
-    // TODO validate input values
     const username = context.decoded["username"];
+
+    const category = await CategoryRepository.findById(data.categoryId);
+    if (!category || category?.username !== username) {
+      return new UploadPostResponse.CategoryNotFound();
+    }
+
     const imageName = await this.uploadImage(file);
 
     await this.savePostingLog(username);
 
-    await PostRepository.save(data.toPostEntity(username, imageName));
-    return new UploadPost();
+    await PostRepository.saveWithTags(
+      data.toPostEntity(username, imageName),
+      data.tagNames
+    );
+    return new UploadPostResponse.UploadPost();
   }
 
   private static async savePostingLog(username: string) {

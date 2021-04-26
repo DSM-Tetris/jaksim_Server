@@ -4,7 +4,15 @@ import { context } from "../context";
 export class CategoryRepository {
   static async findManyByUsername(username: string): Promise<Category[]> {
     return context.prisma.category.findMany({
-      where: { username }
+      where: { username },
+    });
+  }
+
+  static findById(id: number): Promise<Category | null> {
+    return context.prisma.category.findUnique({
+      where: {
+        id,
+      },
     });
   }
 }

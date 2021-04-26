@@ -10,7 +10,7 @@ import {
   RefreshResult,
   RefreshRequest,
 } from "../dto";
-import { TokenRepository, UserRepository } from "../repository";
+import { TokenRepository, UserRepository, LogRepository } from "../repository";
 import { PasswordService } from "./password";
 import {
   JwtGenerator,
@@ -18,7 +18,6 @@ import {
   JwtValidator,
   validateArguments,
 } from "../util";
-import { LogRepository } from "../repository/log";
 import { LogFactory, LoginLogFactory } from "../entity";
 import { EmailService } from "./email";
 import { loginSchema, signupSchema } from "../schema";
@@ -47,9 +46,10 @@ export class UserService {
     return new SignupResponse.SuccessSignup();
   }
 
-  static async login(loginRequest: LoginRequest): Promise<typeof LoginResult> {
-    const { username, password } = loginRequest;
-
+  @Validate
+  static async login(
+    @ValidOf(loginSchema) { username, password }: LoginRequest
+  ): Promise<typeof LoginResult> {
     const user = await UserRepository.findByUsername(username);
     if (!user) {
       return new LoginResponse.InvalidLoginInfo();

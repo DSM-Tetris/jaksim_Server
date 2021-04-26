@@ -1,4 +1,5 @@
 import { createUnionType, Field, ObjectType } from "type-graphql";
+import { BadRequest } from "./badRequest";
 
 enum RefreshMessage {
   SuccessRefresh = "TOKEN SUCCESSFULLY REFRESHED",
@@ -46,7 +47,8 @@ const { Refresh, InvalidAccessToken, InvalidRefreshToken } = RefreshResponse;
 
 export const RefreshResult = createUnionType({
   name: "RefreshResult",
-  types: () => [Refresh, InvalidAccessToken, InvalidRefreshToken] as const,
+  types: () =>
+    [Refresh, InvalidAccessToken, InvalidRefreshToken, BadRequest] as const,
   resolveType: (args) => {
     switch (args.message) {
       case RefreshMessage.SuccessRefresh: {
@@ -57,6 +59,9 @@ export const RefreshResult = createUnionType({
       }
       case RefreshMessage.InvalidRefreshToken: {
         return InvalidRefreshToken;
+      }
+      case BadRequest.getMessage(): {
+        return BadRequest;
       }
       default: {
         return undefined;

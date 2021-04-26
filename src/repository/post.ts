@@ -45,12 +45,14 @@ export class PostRepository {
     });
   }
 
-  static async findManyByUsername(username: string) {
-    return context.prisma.post.findMany({
+  static groupPostByCategoryId(username: string) {
+    return context.prisma.post.groupBy({
       where: { username },
-      include: {
-        category: true
-      }
+      by: ["categoryId"],
+      count: true,
+      orderBy: {
+        categoryId: "asc",
+      },
     });
   }
 }

@@ -1,9 +1,12 @@
 import { CategoryRepository } from "../repository/category";
 import { PostRepository } from "../repository/post";
+import { context } from "../context";
 
 export class CategoryService {
-  static async getCategoryList(username: string) {
+  static async getCategoryList() {
     const categoryList = {};
+    const username: string = context.decoded["username"];
+    
     const posts = await PostRepository.groupPostByCategoryId(username);
     const categories = await CategoryRepository.findManyByUsername(username);
     let numOfAllPost = Number(posts[0].count);

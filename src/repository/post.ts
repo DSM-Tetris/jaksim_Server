@@ -2,7 +2,7 @@ import { Post } from "../entity";
 import { context } from "../context";
 
 export class PostRepository {
-  static async findManyByUsername(
+  static async findTenByUsernameAndCategoryId(
     username: string,
     page: number,
     categoryId?: number
@@ -45,6 +45,17 @@ export class PostRepository {
             createdAt: now,
           })),
         },
+      },
+    });
+  }
+
+  static async groupPostByCategoryId(username: string) {
+    return context.prisma.post.groupBy({
+      where: { username },
+      by: ["categoryId"],
+      count: true,
+      orderBy: {
+        categoryId: "asc",
       },
     });
   }

@@ -1,5 +1,4 @@
-import { CategoryRepository } from "../repository/category";
-import { PostRepository } from "../repository";
+import { PostRepository, CategoryRepository } from "../repository";
 import { context } from "../context";
 import { GetCategoryListResult, GetCategoryListResponse } from "../dto";
 

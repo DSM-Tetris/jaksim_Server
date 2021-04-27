@@ -29,7 +29,10 @@ export class UserRepository {
     });
   }
 
-  static async modifyPasswordByUsername({ username, password }: User): Promise<void> {
+  static async modifyPasswordByUsername(
+    username: string,
+    password: string,
+  ): Promise<void> {
     await context.prisma.user.update({
       where: {
         username,

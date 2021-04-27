@@ -29,13 +29,13 @@ export class UserRepository {
     });
   }
 
-  static async modifyPasswordByUsername(
-    username: string,
+  static async modifyPasswordByEmail(
+    email: string,
     password: string,
   ): Promise<void> {
     await context.prisma.user.update({
       where: {
-        username,
+        email,
       },
       data: {
         password,

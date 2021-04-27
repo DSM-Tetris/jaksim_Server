@@ -10,6 +10,8 @@ import {
   RefreshResult,
   RefreshRequest,
   ModifyPasswordRequest,
+  ModifyPasswordResponse,
+  ModifyPasswordResult,
 } from "../dto";
 import { TokenRepository, UserRepository, LogRepository } from "../repository";
 import { PasswordService } from "./password";
@@ -104,10 +106,10 @@ export class UserService {
 
   static async modifyPassword(
     { email, newPassword, authCode }: ModifyPasswordRequest
-  ) {
+  ): Promise<typeof ModifyPasswordResult> {
     const user = await UserRepository.findByEmail(email);
     if (!user) {
-      // user not exists exception handle
+      return new ModifyPasswordResponse.UserNotExists();
     }
     
     const verifyResult = await EmailService.verifyAuthCode(
@@ -120,5 +122,6 @@ export class UserService {
 
     newPassword = await PasswordService.encryptPassword(newPassword);
     await UserRepository.modifyPasswordByEmail(email, newPassword);
+    return new ModifyPasswordResponse.ModifyPassword();
   }
 }

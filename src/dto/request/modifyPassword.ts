@@ -11,4 +11,8 @@ export class ModifyPasswordRequest {
   @Field()
   @Length(8, 20)
   newPassword!: string;
+
+  @Field()
+  @Length(6, 6)
+  authCode!: string;
 }

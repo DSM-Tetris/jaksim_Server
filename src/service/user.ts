@@ -9,6 +9,7 @@ import {
   LoginResult,
   RefreshResult,
   RefreshRequest,
+  ModifyPasswordRequest,
 } from "../dto";
 import { TokenRepository, UserRepository, LogRepository } from "../repository";
 import { PasswordService } from "./password";
@@ -99,5 +100,25 @@ export class UserService {
       decodedAccessToken as JwtPayload
     );
     return new RefreshResponse.Refresh(regeneratedAccessToken);
+  }
+
+  static async modifyPassword(
+    { email, newPassword, authCode }: ModifyPasswordRequest
+  ) {
+    const user = await UserRepository.findByEmail(email);
+    if (!user) {
+      // user not exists exception handle
+    }
+    
+    const verifyResult = await EmailService.verifyAuthCode(
+      email,
+      authCode
+    );
+    if (verifyResult instanceof VerifyEmailResponse.VerifyEmailFailed) {
+      return verifyResult;
+    }
+
+    newPassword = await PasswordService.encryptPassword(newPassword);
+    await UserRepository.modifyPasswordByEmail(email, newPassword);
   }
 }

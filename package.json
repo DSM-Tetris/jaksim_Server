@@ -6,6 +6,7 @@
   "scripts": {
     "start": "ts-node --type-check src/index",
     "start:dev": "nodemon --exec ts-node src/index.ts",
+    "build": "tsc",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\""
   },
   "repository": {

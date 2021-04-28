@@ -45,4 +45,4 @@ export const modifyPasswordSchema = Joi.object().keys({
     .length(6)
     .regex(/^[0-9]{6}$/)
     .required(),
-})
+});

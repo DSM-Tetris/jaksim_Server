@@ -31,3 +31,18 @@ export const loginSchema = Joi.object().keys({
     )
     .required(),
 });
+
+export const modifyPasswordSchema = Joi.object().keys({
+  email: Joi.string().email().max(25).required(),
+  newPassword: Joi.string()
+    .min(8)
+    .max(20)
+    .regex(
+      /^(?=.*\d)(?=.*[A-Za-z])[~`!@#$%^&*()_+\-=\[\]\\|;':",./<>?a-zA-Z0-9]{8,20}$/
+    )
+    .required(),
+  authCode: Joi.string()
+    .length(6)
+    .regex(/^[0-9]{6}$/)
+    .required(),
+})

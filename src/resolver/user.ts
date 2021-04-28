@@ -6,6 +6,8 @@ import {
   SendEmailResult,
   LoginResult,
   LoginRequest,
+  ModifyPasswordRequest,
+  ModifyPasswordResult,
 } from "../dto";
 import { UserService, EmailService } from "../service";
 import { RefreshResult, RefreshRequest } from "../dto";
@@ -43,5 +45,13 @@ export class UserResolver {
     @Arg("data") data: RefreshRequest
   ): Promise<typeof RefreshResult> {
     return await UserService.regenerateAccessToken(data);
+  }
+
+  @Validate
+  @Mutation(() => ModifyPasswordResult)
+  async modifyPassword(
+    @Arg("data") data: ModifyPasswordRequest
+  ) {
+    return await UserService.modifyPassword(data);
   }
 }

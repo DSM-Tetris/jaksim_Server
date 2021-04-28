@@ -12,7 +12,7 @@ import {
 import { UserService, EmailService } from "../service";
 import { RefreshResult, RefreshRequest } from "../dto";
 import { Validate, ValidOf } from "../decorator/validateArguments";
-import { loginSchema, signupSchema, emailSchema } from "../schema";
+import { loginSchema, signupSchema, emailSchema, modifyPasswordSchema } from "../schema";
 
 @Resolver(User)
 export class UserResolver {
@@ -50,7 +50,7 @@ export class UserResolver {
   @Validate
   @Mutation(() => ModifyPasswordResult)
   async modifyPassword(
-    @Arg("data") data: ModifyPasswordRequest
+    @Arg("data") @ValidOf(modifyPasswordSchema) data: ModifyPasswordRequest
   ) {
     return await UserService.modifyPassword(data);
   }

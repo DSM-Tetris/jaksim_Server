@@ -104,9 +104,8 @@ export class UserService {
     return new RefreshResponse.Refresh(regeneratedAccessToken);
   }
 
-  @Validate
+  // @Validate
   static async modifyPassword(
-    @ValidOf(modifyPasswordSchema)
     { email, newPassword, authCode }: ModifyPasswordRequest
   ): Promise<typeof ModifyPasswordResult> {
     const user = await UserRepository.findByEmail(email);

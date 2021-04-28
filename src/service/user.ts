@@ -23,7 +23,7 @@ import {
 } from "../util";
 import { LogFactory, LoginLogFactory } from "../entity";
 import { EmailService } from "./email";
-import { loginSchema, signupSchema } from "../schema";
+import { loginSchema, signupSchema, modifyPasswordSchema } from "../schema";
 import { Validate, ValidOf } from "../decorator/validateArguments";
 
 export class UserService {
@@ -104,7 +104,9 @@ export class UserService {
     return new RefreshResponse.Refresh(regeneratedAccessToken);
   }
 
+  @Validate
   static async modifyPassword(
+    @ValidOf(modifyPasswordSchema)
     { email, newPassword, authCode }: ModifyPasswordRequest
   ): Promise<typeof ModifyPasswordResult> {
     const user = await UserRepository.findByEmail(email);

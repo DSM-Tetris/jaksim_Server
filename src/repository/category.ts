@@ -1,4 +1,4 @@
-import { Category } from "../entity";
+import { Category, User } from "../entity";
 import { context } from "../context";
 
 export class CategoryRepository {
@@ -13,6 +13,25 @@ export class CategoryRepository {
       where: {
         id,
       },
+    });
+  }
+
+  static async saveWithUser(
+    { name }: Category,
+    { username, password, email, nickname }: User
+  ) {
+    await context.prisma.category.create({
+      data: {
+        name,
+        user: {
+          create: {
+            username,
+            password,
+            email,
+            nickname,
+          }
+        }
+      }
     });
   }
 }

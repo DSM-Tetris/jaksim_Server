@@ -104,7 +104,6 @@ export class UserService {
     return new RefreshResponse.Refresh(regeneratedAccessToken);
   }
 
-  // @Validate
   static async modifyPassword(
     { email, newPassword, authCode }: ModifyPasswordRequest
   ): Promise<typeof ModifyPasswordResult> {

@@ -29,7 +29,7 @@ export class CategoryRepository {
   }
 
   static async saveWithUser(
-    { name }: Category,
+    name: string,
     { username, password, email, nickname }: User
   ) {
     await context.prisma.category.create({

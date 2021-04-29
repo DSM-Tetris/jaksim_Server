@@ -1,6 +1,11 @@
-import { PostRepository, CategoryRepository } from "../repository";
+import { PostRepository, CategoryRepository, UserRepository } from "../repository";
 import { context } from "../context";
-import { GetCategoryListResult, GetCategoryListResponse } from "../dto";
+import {
+  GetCategoryListResult,
+  GetCategoryListResponse,
+  AddCategoryResult,
+  AddCategoryResponse,
+} from "../dto";
 
 export class CategoryService {
   static async getCategoryList(): Promise<typeof GetCategoryListResult> {
@@ -31,5 +36,19 @@ export class CategoryService {
     
     categoryList["전체 카테고리"] = numOfAllPost;
     return new GetCategoryListResponse.GetCategoryList(categoryList);
+  }
+
+  static async addCategory(categoryName: string): Promise<typeof AddCategoryResult> {
+    const username = context.decoded["username"];
+
+    const user = await UserRepository.findByUsername(username);
+    const hasCategory = await CategoryRepository.findByNameAndUsername(categoryName, username);
+
+    if (hasCategory) {
+      return new AddCategoryResponse.CategoryAlreadyExists();
+    }
+
+    await CategoryRepository.saveWithUser(username, user!);
+    return new AddCategoryResponse.AddCategory();
   }
 }

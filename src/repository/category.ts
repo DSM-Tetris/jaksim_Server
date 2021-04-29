@@ -16,6 +16,18 @@ export class CategoryRepository {
     });
   }
 
+  static findByNameAndUsername(
+    categoryName: string,
+    username: string
+  ): Promise<Category | null> {
+    return context.prisma.category.findFirst({
+      where: {
+        name: categoryName,
+        username,
+      }
+    });
+  }
+
   static async saveWithUser(
     { name }: Category,
     { username, password, email, nickname }: User

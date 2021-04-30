@@ -13,6 +13,11 @@ export class CategoryService {
     const username: string = context.decoded["username"];
     
     const posts = await PostRepository.groupPostByCategoryId(username);
+    if (!posts.length) {
+      categoryList["전체 카테고리"] = 0;
+      return new GetCategoryListResponse.GetCategoryList(categoryList);
+    }
+
     const categories = await CategoryRepository.findManyByUsername(username);
     let numOfAllPost = Number(posts[0].count);
 

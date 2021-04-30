@@ -52,8 +52,6 @@ export class PostService {
   }: GetPostRequest): Promise<typeof GetPostResult> {
     const username = context.decoded["username"];
 
-    await validateArguments({ postId }, getPostSchema);
-
     const post = await PostRepository.findOneByPostId(postId);
     if (!post) {
       return new GetPostResponse.NotFoundPost();

@@ -3,6 +3,8 @@ import { Category } from "../entity";
 import { auth } from "../middleware";
 import { CategoryService } from "../service";
 import { GetCategoryListResult, AddCategoryResult } from "../dto";
+import { Validate, ValidOf } from "../decorator/validateArguments";
+import { categoryNameSchema } from "../schema";
 
 @Resolver(Category)
 export class CategoryResolver {
@@ -12,10 +14,11 @@ export class CategoryResolver {
     return await CategoryService.getCategoryList();
   }
 
+  @Validate
   @Mutation(() => AddCategoryResult)
   @UseMiddleware(auth)
   async addCategory(
-    @Arg("categoryName") categoryName: string
+    @Arg("categoryName") @ValidOf(categoryNameSchema) categoryName: string
   ): Promise<typeof AddCategoryResult> {
     return await CategoryService.addCategory(categoryName);
   }

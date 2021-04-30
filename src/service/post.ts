@@ -5,7 +5,6 @@ import {
   UploadPostResult,
   GetPostsRequest,
   GetPostsResult,
-  GetPostRequest,
   GetPostResult,
   GetPostsResponse,
   GetPostResponse,
@@ -48,9 +47,7 @@ export class PostService {
       : new GetPostsResponse.NotFoundAnyPost();
   }
 
-  static async getPost({
-    postId,
-  }: GetPostRequest): Promise<typeof GetPostResult> {
+  static async getPost(postId: number): Promise<typeof GetPostResult> {
     const username = context.decoded["username"];
 
     const post = await PostRepository.findOneByPostId(postId);

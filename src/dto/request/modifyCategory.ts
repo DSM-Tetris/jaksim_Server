@@ -9,5 +9,5 @@ export class ModifyCategoryRequest {
 
   @Field()
   @Length(1, 20)
-  name!: string;
+  categoryName!: string;
 }

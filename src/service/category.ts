@@ -9,8 +9,8 @@ export class CategoryService {
       name: "전체 카테고리",
       count: 0,
     }];
-    const username: string = context.decoded["username"];
-    
+
+    const username: string = context.decoded["username"];    
     const posts = await PostRepository.groupPostByCategoryId(username);
     if (!posts.length) {
       return new GetCategoryListResponse.GetCategoryList(categoryList);
@@ -24,22 +24,31 @@ export class CategoryService {
       numOfAllPost += Number(post.count);
 
       for (let j = 0; j < categories.length; j++) {
-        if (post.categoryId === categories[j].id) {
+        const category = categories[j];
+
+        if (post.categoryId === category.id) {
           categoryList.push({
             id: post.categoryId,
-            name: categories[j].name,
+            name: category.name,
             count: Number(post.count),
           });
+          category.id = 0;
           break;
         }
       }
     }
 
     for (const category of categories) {
-      categoryList[category.name] = 0;
+      if (category.id) {
+        categoryList.push({
+          id: category.id,
+          name: category.name,
+          count: 0
+        });
+      }
     }
     
-    categoryList["전체 카테고리"] = numOfAllPost;
+    categoryList[0].count = numOfAllPost;
     return new GetCategoryListResponse.GetCategoryList(categoryList);
   }
 }

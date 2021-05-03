@@ -5,7 +5,7 @@ import { Post } from "./post";
 @ObjectType()
 export class Category {
   @Field(type => ID)
-  readonly id!: number;
+  id!: number;
 
   @Field()
   name!: string;

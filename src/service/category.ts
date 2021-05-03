@@ -4,7 +4,11 @@ import { GetCategoryListResult, GetCategoryListResponse } from "../dto";
 
 export class CategoryService {
   static async getCategoryList(): Promise<typeof GetCategoryListResult> {
-    const categoryList = {};
+    const categoryList: GetCategoryListResponse.CategoryList[] = [{
+      id: null,
+      name: "전체 카테고리",
+      count: 0,
+    }];
     const username: string = context.decoded["username"];
     
     const posts = await PostRepository.groupPostByCategoryId(username);
@@ -17,9 +21,11 @@ export class CategoryService {
 
       for (let j = 0; j < categories.length; j++) {
         if (post.categoryId === categories[j].id) {
-          categoryList[categories[j].name] = post.count;
-          categories.splice(j, 1);
-          j--;
+          categoryList.push({
+            id: post.categoryId,
+            name: categories[j].name,
+            count: Number(post.count),
+          });
           break;
         }
       }

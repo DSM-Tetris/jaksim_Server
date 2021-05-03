@@ -5,6 +5,9 @@ import {
   GetCategoryListResponse,
   AddCategoryResult,
   AddCategoryResponse,
+  ModifyCategoryResult,
+  ModifyCategoryResponse,
+  ModifyCategoryRequest,
 } from "../dto";
 
 export class CategoryService {
@@ -60,5 +63,21 @@ export class CategoryService {
 
     await CategoryRepository.saveWithUser(username, user!);
     return new AddCategoryResponse.AddCategory();
+  }
+
+  static async modifyCategory(data: ModifyCategoryRequest): Promise<typeof ModifyCategoryResult> {
+    const { id, categoryName } = data;
+    const username = context.decoded["username"];
+
+    const category = await CategoryRepository.findById(id);
+    if (!category) {
+      return new ModifyCategoryResponse.CategoryNotFound();
+    }
+    if (username !== category.username) {
+      return new ModifyCategoryResponse.Forbidden();
+    }
+
+    await CategoryRepository.modifyById(id, categoryName);
+    return new ModifyCategoryResponse.ModifyCategory();
   }
 }

@@ -46,4 +46,18 @@ export class CategoryRepository {
       }
     });
   }
+
+  static async modifyById(
+    id: number,
+    name: string,
+  ): Promise<void> {
+    await context.prisma.category.update({
+      where: {
+        id,
+      },
+      data: {
+        name,
+      },
+    });
+  }
 }

@@ -7,4 +7,11 @@ export class TagRepository {
       where: { postId }
     });
   }
+
+  static count() {
+    return context.prisma.tag.groupBy({
+      by: ["tagName"],
+      count: true,
+    });
+  }
 }

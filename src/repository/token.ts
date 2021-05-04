@@ -2,6 +2,7 @@ import { context } from "../context";
 
 export class TokenRepository {
   private static keyPrefix = "refresh/";
+  private static duration = 60 * 60 * 24 * 7;
 
   static saveRefreshToken(
     username: string,
@@ -12,7 +13,7 @@ export class TokenRepository {
         this.keyPrefix + username,
         refreshToken,
         "EX",
-        60 * 60 * 24 * 7,
+        this.duration,
         (err) => {
           if (err) {
             return reject(err);

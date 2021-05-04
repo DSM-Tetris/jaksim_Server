@@ -2,24 +2,22 @@ import { context } from "../context";
 
 export class EmailRepository {
   private static keyPrefix = "email/";
+  private static duration = 60 * 3;
 
-  static saveEmailAuthKey(
-    email: string,
-    authCode: string
-  ): Promise<void> {
+  static saveEmailAuthKey(email: string, authCode: string): Promise<void> {
     return new Promise<void>((resolve, reject) => {
       context.redisClient.set(
         this.keyPrefix + email,
         authCode,
         "EX",
-        60 * 3,
+        this.duration,
         (err) => {
           if (err) {
             return reject(err);
           }
           resolve();
         }
-      )
+      );
     });
   }
 

@@ -1,54 +1,61 @@
 import { PostRepository, CategoryRepository } from "../repository";
 import { context } from "../context";
 import { GetCategoryListResult, GetCategoryListResponse } from "../dto";
+import { Category } from "../entity";
 
 export class CategoryService {
   static async getCategoryList(): Promise<typeof GetCategoryListResult> {
-    const categoryList: GetCategoryListResponse.CategoryList[] = [{
-      id: null,
-      name: "전체 카테고리",
-      count: 0,
-    }];
-
-    const username: string = context.decoded["username"];    
+    const username: string = context.decoded["username"];
     const posts = await PostRepository.groupPostByCategoryId(username);
     if (!posts.length) {
-      return new GetCategoryListResponse.GetCategoryList(categoryList);
+      return new GetCategoryListResponse.GetCategoryList([]);
     }
-  
+
     const categories = await CategoryRepository.findManyByUsername(username);
-    let numOfAllPost = Number(posts[0].count);
 
-    for (let i = 1; i < posts.length; i++) {
-      const post = posts[i];
-      numOfAllPost += Number(post.count);
+    return new GetCategoryListResponse.GetCategoryList(
+      this.getRawCategoryList(posts, categories)
+    );
+  }
 
-      for (let j = 0; j < categories.length; j++) {
-        const category = categories[j];
-
-        if (post.categoryId === category.id) {
-          categoryList.push({
-            id: post.categoryId,
-            name: category.name,
-            count: Number(post.count),
-          });
-          category.id = 0;
-          break;
-        }
-      }
-    }
-
-    for (const category of categories) {
-      if (category.id) {
-        categoryList.push({
-          id: category.id,
-          name: category.name,
-          count: 0
+  private static getRawCategoryList(posts, categories: Category[]) {
+    const result: GetCategoryListResponse.CategoryList[] = [];
+    for (const post of posts) {
+      if (post.categoryId !== null) {
+        const index = this.findIndexWithSameCategoryId(post, categories);
+        result.push({
+          id: post.categoryId,
+          name: categories[index].name,
+          count: post.count,
         });
+        categories.splice(index, 1);
       }
     }
-    
-    categoryList[0].count = numOfAllPost;
-    return new GetCategoryListResponse.GetCategoryList(categoryList);
+    result.push({
+      id: null,
+      name: "전체 카테고리",
+      count: this.getNumOfAllPosts(posts),
+    });
+    return result;
+  }
+
+  private static findIndexWithSameCategoryId(post, categories: Category[]) {
+    let left = 0;
+    let right = categories.length - 1;
+    while (left <= right) {
+      let mid = Math.floor((left + right) / 2);
+      if (categories[mid].id === post.categoryId) {
+        return mid;
+      } else if (categories[mid].id > post.categoryId) {
+        right = mid - 1;
+      } else {
+        left = mid + 1;
+      }
+    }
+    return -1;
+  }
+
+  private static getNumOfAllPosts(posts) {
+    return posts.reduce((prev, post) => prev + post.count, 0);
   }
 }

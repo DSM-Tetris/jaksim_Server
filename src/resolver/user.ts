@@ -16,32 +16,32 @@ import { loginSchema, signupSchema, emailSchema } from "../schema";
 export class UserResolver {
   @Validate
   @Mutation(() => SignupResult)
-  async signup(
+  signup(
     @Arg("data") @ValidOf(signupSchema) data: SignupRequest
   ): Promise<typeof SignupResult> {
-    return await UserService.signup(data);
+    return UserService.signup(data);
   }
 
   @Validate
   @Mutation(() => SendEmailResult)
-  async sendVerificationEmail(
+  sendVerificationEmail(
     @Arg("email") @ValidOf(emailSchema) email: string
   ): Promise<typeof SendEmailResult> {
-    return await EmailService.sendVerificationEmail(email);
+    return EmailService.sendVerificationEmail(email);
   }
 
   @Validate
   @Mutation(() => LoginResult)
-  async login(
+  login(
     @Arg("data") @ValidOf(loginSchema) data: LoginRequest
   ): Promise<typeof LoginResult> {
-    return await UserService.login(data);
+    return UserService.login(data);
   }
 
   @Mutation(() => RefreshResult)
-  async regenerateAccessToken(
+  regenerateAccessToken(
     @Arg("data") data: RefreshRequest
   ): Promise<typeof RefreshResult> {
-    return await UserService.regenerateAccessToken(data);
+    return UserService.regenerateAccessToken(data);
   }
 }

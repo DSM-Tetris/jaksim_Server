@@ -8,7 +8,7 @@ import { GetCategoryListResult } from "../dto";
 export class CategoryResolver {
   @Query(() => GetCategoryListResult)
   @UseMiddleware(auth)
-  async getCategoryList(): Promise<typeof GetCategoryListResult> {
-    return await CategoryService.getCategoryList();
+  getCategoryList(): Promise<typeof GetCategoryListResult> {
+    return CategoryService.getCategoryList();
   }
 }

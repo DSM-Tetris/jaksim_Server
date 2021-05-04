@@ -25,27 +25,27 @@ export class PostResolver {
   @Validate
   @Query(() => GetPostsResult)
   @UseMiddleware(auth)
-  async getPosts(
+  getPosts(
     @Arg("data") @ValidOf(getPostsSchema) data: GetPostsRequest
   ): Promise<typeof GetPostsResult> {
-    return await PostService.getPosts(data);
+    return PostService.getPosts(data);
   }
 
   @Validate
   @Mutation(() => UploadPostResult)
-  async uploadPost(
+  uploadPost(
     @Arg("data") @ValidOf(uploadPostSchema) data: UploadPostRequest,
     @Arg("picture", () => GraphQLUpload) @ValidOf(pictureSchema) file: Upload
   ): Promise<typeof UploadPostResult> {
-    return await PostService.uploadPost(data, file);
+    return PostService.uploadPost(data, file);
   }
 
   @Validate
   @Query(() => GetPostResult)
   @UseMiddleware(auth)
-  async getPost(
+  getPost(
     @Arg("data") @ValidOf(getPostSchema) data: GetPostRequest
   ): Promise<typeof GetPostResult> {
-    return await PostService.getPost(data);
+    return PostService.getPost(data);
   }
 }

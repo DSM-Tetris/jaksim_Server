@@ -7,9 +7,15 @@ enum GetCategoryListMessage {
 }
 
 export namespace GetCategoryListResponse {
+  export interface CategoryList {
+    id: number | null;
+    name: string;
+    count: number;
+  }
+
   @ObjectType()
   export class GetCategoryList {
-    constructor(categoryList: object) {
+    constructor(categoryList: CategoryList[]) {
       this.message = GetCategoryListMessage.SuccessGetCategoryList;
       this.categoryList = categoryList;
     }

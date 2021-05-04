@@ -1,3 +1,4 @@
+import moment from "moment";
 import { Tag } from "../entity";
 import { context } from "../context";
 
@@ -8,10 +9,18 @@ export class TagRepository {
     });
   }
 
-  static count() {
+  static countTodayTags() {
+    const today = moment().format("YYYY-MM-DD");
+    
     return context.prisma.tag.groupBy({
       by: ["tagName"],
       count: true,
+      where: {
+        createdAt: {
+          gte: moment(today).toISOString(),
+          lt: moment(today).add(1, "days").toISOString(),
+        },
+      },
     });
   }
 }

@@ -10,15 +10,16 @@ export class TagRepository {
   }
 
   static countTags(ago: number) {
-    const today = moment().format("YYYY-MM-DD");
-    
+    const gteDay = moment().subtract(ago, "d").format("YYYY-MM-DD");
+    const ltDay = moment().add(1, "d").format("YYYY-MM-DD");
+
     return context.prisma.tag.groupBy({
       by: ["tagName"],
       count: true,
       where: {
         createdAt: {
-          gte: moment(today).subtract(ago, "days").toISOString(),
-          lt: moment(today).add(1, "days").toISOString(),
+          gte: new Date(gteDay).toISOString(),
+          lt: new Date(ltDay).toISOString(),
         },
       },
     });

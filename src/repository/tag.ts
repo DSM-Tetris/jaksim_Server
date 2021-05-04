@@ -17,7 +17,7 @@ export class TagRepository {
       count: true,
       where: {
         createdAt: {
-          gt: moment(today).add(ago, "days").toISOString(),
+          gte: moment(today).add(ago, "days").toISOString(),
           lt: moment(today).add(1, "days").toISOString(),
         },
       },

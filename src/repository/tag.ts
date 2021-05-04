@@ -9,7 +9,7 @@ export class TagRepository {
     });
   }
 
-  static countTodayTags() {
+  static countTags(ago: number) {
     const today = moment().format("YYYY-MM-DD");
     
     return context.prisma.tag.groupBy({
@@ -17,7 +17,7 @@ export class TagRepository {
       count: true,
       where: {
         createdAt: {
-          gte: moment(today).toISOString(),
+          gt: moment(today).add(ago, "days").toISOString(),
           lt: moment(today).add(1, "days").toISOString(),
         },
       },

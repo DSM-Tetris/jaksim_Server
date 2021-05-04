@@ -13,12 +13,12 @@ export interface Context {
   prisma: PrismaClient;
   redisClient: RedisClient;
   token: string;
-  decoded: object;
+  decoded: object | string;
 }
 
 export const context: Context = {
   prisma,
   redisClient,
   token: "",
-  decoded: {}
+  decoded: {},
 };

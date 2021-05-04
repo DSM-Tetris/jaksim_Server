@@ -4,7 +4,7 @@ import { context } from "../context";
 import config from "../config";
 import { Unauthorized } from "../dto";
 
-export const auth: MiddlewareFn = (_, next) => {
+export const auth: MiddlewareFn = async (_, next) => {
   if (!context.token) {
     return new Unauthorized();
   }

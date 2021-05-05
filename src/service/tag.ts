@@ -4,7 +4,7 @@ export class TagService {
   static async getPopularTags(ago: number) {
     const tags = await TagRepository.countTags(ago);
     tags.sort((a, b) => {
-      return b.count - a.count;
+      return Number(b.count) - Number(a.count);
     });
 
     const popularTags: string[] = [];

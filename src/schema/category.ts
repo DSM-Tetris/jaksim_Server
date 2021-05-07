@@ -6,3 +6,5 @@ export const modifyCategorySchema = Joi.object().keys({
   id: Joi.number().integer().min(1).required(),
   categoryName: Joi.string().min(1).max(20).required(),
 });
+
+export const categoryIdSchema = Joi.number().integer().min(1).required();

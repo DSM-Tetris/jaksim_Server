@@ -2,7 +2,7 @@ import { Category } from "../entity";
 import { context } from "../context";
 
 export class CategoryRepository {
-  static async findManyByUsername(username: string): Promise<Category[]> {
+  static findManyByUsername(username: string): Promise<Category[]> {
     return context.prisma.category.findMany({
       where: { username },
     });
@@ -14,5 +14,9 @@ export class CategoryRepository {
         id,
       },
     });
+  }
+
+  static async delete(id: number): Promise<void> {
+    await context.prisma.category.delete({ where: { id } });
   }
 }

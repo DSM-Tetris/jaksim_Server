@@ -16,6 +16,20 @@ export class CategoryRepository {
     });
   }
 
+  static findByIdAndUsername(
+    id: number,
+    username: string
+  ): Promise<Category | null> {
+    return context.prisma.category.findFirst({
+      where: {
+        AND: {
+          id,
+          username,
+        },
+      },
+    });
+  }
+
   static findByNameAndUsername(
     categoryName: string,
     username: string
@@ -24,7 +38,7 @@ export class CategoryRepository {
       where: {
         name: categoryName,
         username,
-      }
+      },
     });
   }
 
@@ -41,16 +55,13 @@ export class CategoryRepository {
             password,
             email,
             nickname,
-          }
-        }
-      }
+          },
+        },
+      },
     });
   }
 
-  static async modifyById(
-    id: number,
-    name: string,
-  ): Promise<void> {
+  static async modifyById(id: number, name: string): Promise<void> {
     await context.prisma.category.update({
       where: {
         id,

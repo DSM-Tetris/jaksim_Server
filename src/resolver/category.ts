@@ -7,9 +7,14 @@ import {
   AddCategoryResult,
   ModifyCategoryResult,
   ModifyCategoryRequest,
+  RemoveCategoryResult,
 } from "../dto";
 import { Validate, ValidOf } from "../decorator/validateArguments";
-import { categoryNameSchema, modifyCategorySchema } from "../schema";
+import {
+  categoryIdSchema,
+  categoryNameSchema,
+  modifyCategorySchema,
+} from "../schema";
 
 @Resolver(Category)
 export class CategoryResolver {
@@ -35,5 +40,12 @@ export class CategoryResolver {
     @Arg("data") @ValidOf(modifyCategorySchema) data: ModifyCategoryRequest
   ): Promise<typeof ModifyCategoryResult> {
     return await CategoryService.modifyCategory(data);
+  }
+
+  @Validate
+  @Mutation(() => RemoveCategoryResult)
+  @UseMiddleware(auth)
+  async removeCategory(@Arg("id") @ValidOf(categoryIdSchema) id: number) {
+    return await CategoryService.removeCategory(id);
   }
 }

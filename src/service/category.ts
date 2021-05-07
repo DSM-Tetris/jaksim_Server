@@ -31,11 +31,7 @@ export class CategoryService {
         categories.splice(index, 1);
       }
     }
-    result.push({
-      id: null,
-      name: "전체 카테고리",
-      count: this.getNumOfAllPosts(posts),
-    });
+    result.push(this.getWholeCategory(posts));
     return result;
   }
 
@@ -53,6 +49,14 @@ export class CategoryService {
       }
     }
     return -1;
+  }
+
+  private static getWholeCategory(posts): GetCategoryListResponse.CategoryList {
+    return {
+      id: null,
+      name: "전체 카테고리",
+      count: this.getNumOfAllPosts(posts),
+    };
   }
 
   private static getNumOfAllPosts(posts) {

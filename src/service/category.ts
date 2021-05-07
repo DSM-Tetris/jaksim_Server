@@ -1,6 +1,14 @@
-import { PostRepository, CategoryRepository } from "../repository";
+import { PostRepository, CategoryRepository, UserRepository } from "../repository";
 import { context } from "../context";
-import { GetCategoryListResult, GetCategoryListResponse } from "../dto";
+import {
+  GetCategoryListResult,
+  GetCategoryListResponse,
+  AddCategoryResult,
+  AddCategoryResponse,
+  ModifyCategoryResult,
+  ModifyCategoryResponse,
+  ModifyCategoryRequest,
+} from "../dto";
 import { Category } from "../entity";
 
 export class CategoryService {
@@ -49,6 +57,36 @@ export class CategoryService {
       }
     }
     return -1;
+  }
+
+  static async addCategory(categoryName: string): Promise<typeof AddCategoryResult> {
+    const username = context.decoded["username"];
+
+    const user = await UserRepository.findByUsername(username);
+    const hasCategory = await CategoryRepository.findByNameAndUsername(categoryName, username);
+
+    if (hasCategory) {
+      return new AddCategoryResponse.CategoryAlreadyExists();
+    }
+
+    await CategoryRepository.saveWithUser(username, user!);
+    return new AddCategoryResponse.AddCategory();
+  }
+
+  static async modifyCategory(data: ModifyCategoryRequest): Promise<typeof ModifyCategoryResult> {
+    const { id, categoryName } = data;
+    const username = context.decoded["username"];
+
+    const category = await CategoryRepository.findById(id);
+    if (!category) {
+      return new ModifyCategoryResponse.CategoryNotFound();
+    }
+    if (username !== category.username) {
+      return new ModifyCategoryResponse.Forbidden();
+    }
+
+    await CategoryRepository.modifyById(id, categoryName);
+    return new ModifyCategoryResponse.ModifyCategory();
   }
 
   private static getWholeCategory(posts): GetCategoryListResponse.CategoryList {

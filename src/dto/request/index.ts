@@ -4,3 +4,5 @@ export * from "./getPosts";
 export * from "./getPost";
 export * from "./refresh";
 export * from "./uploadPost";
+export * from "./modifyPassword";
+export * from "./modifyCategory";

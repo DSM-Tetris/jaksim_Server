@@ -7,6 +7,9 @@ export * from "./uploadPost";
 export * from "./getPosts";
 export * from "./getPost";
 export * from "./getCategory";
+export * from "./modifyPassword";
+export * from "./addCategory";
+export * from "./modifyCategory";
 
 export * from "./badRequest";
 export * from "./unauthorized";

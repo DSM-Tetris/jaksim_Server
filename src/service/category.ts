@@ -1,4 +1,8 @@
-import { PostRepository, CategoryRepository, UserRepository } from "../repository";
+import {
+  PostRepository,
+  CategoryRepository,
+  UserRepository,
+} from "../repository";
 import { context } from "../context";
 import {
   GetCategoryListResult,
@@ -8,6 +12,8 @@ import {
   ModifyCategoryResult,
   ModifyCategoryResponse,
   ModifyCategoryRequest,
+  RemoveCategoryResult,
+  RemoveCategoryResponse,
 } from "../dto";
 import { Category } from "../entity";
 
@@ -24,6 +30,18 @@ export class CategoryService {
     return new GetCategoryListResponse.GetCategoryList(
       this.getRawCategoryList(posts, categories)
     );
+  }
+
+  static async removeCategory(
+    id: number
+  ): Promise<typeof RemoveCategoryResult> {
+    const username: string = context.decoded["username"];
+    const category = await CategoryRepository.findByIdAndUsername(id, username);
+    if (!category) {
+      return new RemoveCategoryResponse.CategoryNotFound();
+    }
+    await CategoryRepository.delete(id);
+    return new RemoveCategoryResponse.RemoveCategory();
   }
 
   private static getRawCategoryList(posts, categories: Category[]) {
@@ -59,11 +77,16 @@ export class CategoryService {
     return -1;
   }
 
-  static async addCategory(categoryName: string): Promise<typeof AddCategoryResult> {
+  static async addCategory(
+    categoryName: string
+  ): Promise<typeof AddCategoryResult> {
     const username = context.decoded["username"];
 
     const user = await UserRepository.findByUsername(username);
-    const hasCategory = await CategoryRepository.findByNameAndUsername(categoryName, username);
+    const hasCategory = await CategoryRepository.findByNameAndUsername(
+      categoryName,
+      username
+    );
 
     if (hasCategory) {
       return new AddCategoryResponse.CategoryAlreadyExists();
@@ -73,7 +96,9 @@ export class CategoryService {
     return new AddCategoryResponse.AddCategory();
   }
 
-  static async modifyCategory(data: ModifyCategoryRequest): Promise<typeof ModifyCategoryResult> {
+  static async modifyCategory(
+    data: ModifyCategoryRequest
+  ): Promise<typeof ModifyCategoryResult> {
     const { id, categoryName } = data;
     const username = context.decoded["username"];
 

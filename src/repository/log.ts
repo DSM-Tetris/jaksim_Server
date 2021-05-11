@@ -13,11 +13,11 @@ export class LogRepository {
     });
   }
 
-  static findManyByUsername(username: string, maxDay: number) {
+  static findManyByUsername(username: string) {
     const thisMonth = moment().format("YYYY-MM");
     const nextMonth = moment().add(1, "M").format("YYYY-MM");
 
-    context.prisma.log.findMany({
+    return context.prisma.log.findMany({
       where: {
         date: {
           gte: new Date(thisMonth).toISOString(),

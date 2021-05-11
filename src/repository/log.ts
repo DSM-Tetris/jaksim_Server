@@ -25,7 +25,7 @@ export class LogRepository {
         },
         username
       },
-      distinct: ["date"],
+      distinct: ["date", "type"],
     });
   }
 }

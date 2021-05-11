@@ -24,7 +24,8 @@ export class LogRepository {
           lt: new Date(nextMonth).toISOString(),
         },
         username
-      }
+      },
+      distinct: ["date"],
     });
   }
 }

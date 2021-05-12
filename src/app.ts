@@ -1,14 +1,14 @@
 import "reflect-metadata";
 import { buildSchema } from "type-graphql";
 import { ApolloServer } from "apollo-server";
-import { UserResolver, PostResolver, CategoryResolver } from "./resolver";
+import { UserResolver, PostResolver, CategoryResolver, LogResolver } from "./resolver";
 import { context } from "./context";
 import config from "./config";
 import { formatError } from "./formatError";
 
 export const app = async () => {
   const schema = await buildSchema({
-    resolvers: [UserResolver, PostResolver, CategoryResolver],
+    resolvers: [UserResolver, PostResolver, CategoryResolver, LogResolver],
     validate: false,
   });
 

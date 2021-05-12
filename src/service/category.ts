@@ -6,41 +6,62 @@ import {
   AddCategoryResult,
   AddCategoryResponse,
 } from "../dto";
+import { Category } from "../entity";
 
 export class CategoryService {
   static async getCategoryList(): Promise<typeof GetCategoryListResult> {
-    const categoryList = {};
     const username: string = context.decoded["username"];
-    
     const posts = await PostRepository.groupPostByCategoryId(username);
     if (!posts.length) {
-      categoryList["전체 카테고리"] = 0;
-      return new GetCategoryListResponse.GetCategoryList(categoryList);
+      return new GetCategoryListResponse.GetCategoryList([]);
     }
 
     const categories = await CategoryRepository.findManyByUsername(username);
-    let numOfAllPost = Number(posts[0].count);
 
-    for (let i = 1; i < posts.length; i++) {
-      const post = posts[i];
-      numOfAllPost += Number(post.count);
+    return new GetCategoryListResponse.GetCategoryList(
+      this.getRawCategoryList(posts, categories)
+    );
+  }
 
-      for (let j = 0; j < categories.length; j++) {
-        if (post.categoryId === categories[j].id) {
-          categoryList[categories[j].name] = post.count;
-          categories.splice(j, 1);
-          j--;
-          break;
-        }
+  private static getRawCategoryList(posts, categories: Category[]) {
+    const result: GetCategoryListResponse.CategoryList[] = [];
+    for (const post of posts) {
+      if (post.categoryId !== null) {
+        const index = this.findIndexWithSameCategoryId(post, categories);
+        result.push({
+          id: post.categoryId,
+          name: categories[index].name,
+          count: post.count,
+        });
+        categories.splice(index, 1);
       }
     }
+    result.push({
+      id: null,
+      name: "전체 카테고리",
+      count: this.getNumOfAllPosts(posts),
+    });
+    return result;
+  }
 
-    for (const category of categories) {
-      categoryList[category.name] = 0;
+  private static findIndexWithSameCategoryId(post, categories: Category[]) {
+    let left = 0;
+    let right = categories.length - 1;
+    while (left <= right) {
+      let mid = Math.floor((left + right) / 2);
+      if (categories[mid].id === post.categoryId) {
+        return mid;
+      } else if (categories[mid].id > post.categoryId) {
+        right = mid - 1;
+      } else {
+        left = mid + 1;
+      }
     }
-    
-    categoryList["전체 카테고리"] = numOfAllPost;
-    return new GetCategoryListResponse.GetCategoryList(categoryList);
+    return -1;
+  }
+
+  private static getNumOfAllPosts(posts) {
+    return posts.reduce((prev, post) => prev + post.count, 0);
   }
 
   static async addCategory(categoryName: string): Promise<typeof AddCategoryResult> {

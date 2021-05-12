@@ -9,6 +9,7 @@ export * from "./getPost";
 export * from "./getCategory";
 export * from "./modifyPassword";
 export * from "./addCategory";
+export * from "./getPercentageOfBattery";
 
 export * from "./badRequest";
 export * from "./unauthorized";

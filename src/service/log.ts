@@ -1,9 +1,13 @@
 import { LogRepository } from "../repository";
 import { context } from "../context";
 import { LogType } from "../entity";
+import {
+  GetPercentageOfBatteryResponse,
+  GetPercentageOfBatteryResult,
+} from "../dto";
 
 export class LogService {
-  static async getPercentageOfBattery() {
+  static async getPercentageOfBattery(): Promise<typeof GetPercentageOfBatteryResult> {
     const username: string = context.decoded["username"];
     const logs = await LogRepository.findManyByUsername(username);
 
@@ -17,6 +21,9 @@ export class LogService {
       }
     }
 
-    return percentageOfBattery < 100 ? percentageOfBattery : 100;
+    if (percentageOfBattery > 100) {
+      percentageOfBattery = 100;
+    }
+    return new GetPercentageOfBatteryResponse.GetPercentageOfBattery(percentageOfBattery);
   }
 }

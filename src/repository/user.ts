@@ -28,4 +28,18 @@ export class UserRepository {
       }
     });
   }
+
+  static async modifyPasswordByEmail(
+    email: string,
+    password: string,
+  ): Promise<void> {
+    await context.prisma.user.update({
+      where: {
+        email,
+      },
+      data: {
+        password,
+      },
+    });
+  }
 }

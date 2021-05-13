@@ -11,8 +11,7 @@ import {
 } from "../dto";
 import { Upload } from "../type";
 import path from "path";
-import { getPostsSchema, getPostSchema } from "../schema";
-import { validateArguments, ImageNameGenerator } from "../util";
+import { ImageNameGenerator } from "../util";
 import { context } from "../context";
 import { PostRepository, TagRepository, LogRepository } from "../repository";
 import { LogFactory, PostingLogFactory } from "../entity";

@@ -49,7 +49,7 @@ export class PostRepository {
     });
   }
 
-  static async groupPostByCategoryId(username: string) {
+  static groupPostByCategoryId(username: string) {
     return context.prisma.post.groupBy({
       where: { username },
       by: ["categoryId"],

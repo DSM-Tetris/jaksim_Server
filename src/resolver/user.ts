@@ -6,11 +6,13 @@ import {
   SendEmailResult,
   LoginResult,
   LoginRequest,
+  ModifyPasswordRequest,
+  ModifyPasswordResult,
 } from "../dto";
 import { UserService, EmailService } from "../service";
 import { RefreshResult, RefreshRequest } from "../dto";
 import { Validate, ValidOf } from "../decorator/validateArguments";
-import { loginSchema, signupSchema, emailSchema } from "../schema";
+import { loginSchema, signupSchema, emailSchema, modifyPasswordSchema } from "../schema";
 
 @Resolver(User)
 export class UserResolver {
@@ -43,5 +45,13 @@ export class UserResolver {
     @Arg("data") data: RefreshRequest
   ): Promise<typeof RefreshResult> {
     return await UserService.regenerateAccessToken(data);
+  }
+
+  @Validate
+  @Mutation(() => ModifyPasswordResult)
+  async modifyPassword(
+    @Arg("data") @ValidOf(modifyPasswordSchema) data: ModifyPasswordRequest
+  ) {
+    return await UserService.modifyPassword(data);
   }
 }

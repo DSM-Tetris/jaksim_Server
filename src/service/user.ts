@@ -9,6 +9,9 @@ import {
   LoginResult,
   RefreshResult,
   RefreshRequest,
+  ModifyPasswordRequest,
+  ModifyPasswordResponse,
+  ModifyPasswordResult,
 } from "../dto";
 import { TokenRepository, UserRepository, LogRepository } from "../repository";
 import { PasswordService } from "./password";
@@ -20,7 +23,7 @@ import {
 } from "../util";
 import { LogFactory, LoginLogFactory } from "../entity";
 import { EmailService } from "./email";
-import { loginSchema, signupSchema } from "../schema";
+import { loginSchema, signupSchema, modifyPasswordSchema } from "../schema";
 import { Validate, ValidOf } from "../decorator/validateArguments";
 
 export class UserService {
@@ -99,5 +102,26 @@ export class UserService {
       decodedAccessToken as JwtPayload
     );
     return new RefreshResponse.Refresh(regeneratedAccessToken);
+  }
+
+  static async modifyPassword(
+    { email, newPassword, authCode }: ModifyPasswordRequest
+  ): Promise<typeof ModifyPasswordResult> {
+    const user = await UserRepository.findByEmail(email);
+    if (!user) {
+      return new ModifyPasswordResponse.UserNotExists();
+    }
+    
+    const verifyResult = await EmailService.verifyAuthCode(
+      email,
+      authCode
+    );
+    if (verifyResult instanceof VerifyEmailResponse.VerifyEmailFailed) {
+      return verifyResult;
+    }
+
+    newPassword = await PasswordService.encryptPassword(newPassword);
+    await UserRepository.modifyPasswordByEmail(email, newPassword);
+    return new ModifyPasswordResponse.ModifyPassword();
   }
 }

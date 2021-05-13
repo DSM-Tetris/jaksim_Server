@@ -25,7 +25,6 @@ export class PostService {
     categoryId,
   }: GetPostsRequest): Promise<typeof GetPostsResult> {
     const username = context.decoded["username"];
-    await validateArguments({ username, page, categoryId }, getPostsSchema);
 
     const posts = await PostRepository.findTenByUsernameAndCategoryId(username, page, categoryId);
     const response: GetPostsResponse.PostPreview[] = [];

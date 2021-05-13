@@ -23,7 +23,7 @@ import {
 } from "../util";
 import { LogFactory, LoginLogFactory } from "../entity";
 import { EmailService } from "./email";
-import { loginSchema, signupSchema, modifyPasswordSchema } from "../schema";
+import { loginSchema, signupSchema } from "../schema";
 import { Validate, ValidOf } from "../decorator/validateArguments";
 
 export class UserService {
@@ -104,18 +104,17 @@ export class UserService {
     return new RefreshResponse.Refresh(regeneratedAccessToken);
   }
 
-  static async modifyPassword(
-    { email, newPassword, authCode }: ModifyPasswordRequest
-  ): Promise<typeof ModifyPasswordResult> {
+  static async modifyPassword({
+    email,
+    newPassword,
+    authCode,
+  }: ModifyPasswordRequest): Promise<typeof ModifyPasswordResult> {
     const user = await UserRepository.findByEmail(email);
     if (!user) {
       return new ModifyPasswordResponse.UserNotExists();
     }
-    
-    const verifyResult = await EmailService.verifyAuthCode(
-      email,
-      authCode
-    );
+
+    const verifyResult = await EmailService.verifyAuthCode(email, authCode);
     if (verifyResult instanceof VerifyEmailResponse.VerifyEmailFailed) {
       return verifyResult;
     }

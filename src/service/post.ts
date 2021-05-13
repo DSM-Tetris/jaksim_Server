@@ -15,9 +15,13 @@ import path from "path";
 import { getPostsSchema, getPostSchema } from "../schema";
 import { validateArguments, ImageNameGenerator } from "../util";
 import { context } from "../context";
-import { PostRepository, TagRepository, LogRepository } from "../repository";
+import {
+  PostRepository,
+  TagRepository,
+  LogRepository,
+  CategoryRepository,
+} from "../repository";
 import { LogFactory, PostingLogFactory } from "../entity";
-import { CategoryRepository } from "../repository/category";
 
 export class PostService {
   static async getPosts({
@@ -27,7 +31,11 @@ export class PostService {
     const username = context.decoded["username"];
     await validateArguments({ username, page, categoryId }, getPostsSchema);
 
-    const posts = await PostRepository.findTenByUsernameAndCategoryId(username, page, categoryId);
+    const posts = await PostRepository.findTenByUsernameAndCategoryId(
+      username,
+      page,
+      categoryId
+    );
     const response: GetPostsResponse.PostPreview[] = [];
 
     for (const post of posts) {

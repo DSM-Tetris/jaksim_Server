@@ -5,19 +5,23 @@ import config from "../config";
 import { Unauthorized } from "../dto";
 
 export const auth: MiddlewareFn = async (_, next) => {
-  const token: string = context.token;
-  if (!token) {
+  if (!context.token) {
     return new Unauthorized();
   }
 
-  const bearer: string = token.split("Bearer ")[1];
-  verify(bearer, config.JWT_SECRET, (err, decoded) => {
-    if (err || !decoded) {
-      return new Unauthorized();
-    }
-
-    context.decoded = decoded;
-  });
+  context.decoded = verifyToken(extractBearerToken(context.token));
 
   return await next();
+};
+
+const extractBearerToken = (bearerToken: string): string => {
+  return bearerToken.split("Bearer ")[1];
+};
+
+const verifyToken = (token: string) => {
+  try {
+    return verify(token, config.JWT_SECRET);
+  } catch (e) {
+    return new Unauthorized();
+  }
 };

@@ -5,7 +5,6 @@ import {
   UploadPostResult,
   GetPostsRequest,
   GetPostsResult,
-  GetPostRequest,
   GetPostResult,
   GetPostsResponse,
   GetPostResponse,
@@ -33,6 +32,7 @@ export class PostService {
       const tags = await TagRepository.findByPostId(post.id);
       response.push(
         new GetPostsResponse.PostPreview(
+          post.id,
           post.title,
           post.content ? post.content.slice(0, 100) : null,
           post.image,
@@ -46,12 +46,8 @@ export class PostService {
       : new GetPostsResponse.NotFoundAnyPost();
   }
 
-  static async getPost({
-    postId,
-  }: GetPostRequest): Promise<typeof GetPostResult> {
+  static async getPost(postId: number): Promise<typeof GetPostResult> {
     const username = context.decoded["username"];
-
-    await validateArguments({ postId }, getPostSchema);
 
     const post = await PostRepository.findOneByPostId(postId);
     if (!post) {

@@ -33,7 +33,6 @@ export class PostService {
       const tags = await TagRepository.findByPostId(post.id);
       response.push(
         new GetPostsResponse.PostPreview(
-          post.id,
           post.title,
           post.content ? post.content.slice(0, 100) : null,
           post.image,

@@ -1,4 +1,4 @@
-import { ObjectType, Field, createUnionType, ID } from "type-graphql";
+import { ObjectType, Field, createUnionType } from "type-graphql";
 import { Length, MaxLength } from "class-validator";
 import { Tag } from "../../entity";
 import { BadRequest } from "./badRequest";
@@ -13,21 +13,16 @@ export namespace GetPostsResponse {
   @ObjectType()
   export class PostPreview {
     constructor(
-      id: number,
       title: string,
       contentPreview: string | null,
       image: string,
       tags: Tag[]
     ) {
-      this.id = id;
       this.title = title;
       this.contentPreview = contentPreview;
       this.image = image;
       this.tags = tags;
     }
-    
-    @Field(type => ID)
-    readonly id: number;
 
     @Field()
     @Length(1, 45)

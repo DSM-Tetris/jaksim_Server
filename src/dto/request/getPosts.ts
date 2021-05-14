@@ -3,7 +3,7 @@ import { Min } from "class-validator";
 
 @InputType()
 export class GetPostsRequest {
-  @Field()
+  @Field(type => Int)
   @Min(1)
   page!: number;
 

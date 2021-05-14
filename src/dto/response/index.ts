@@ -11,6 +11,7 @@ export * from "./modifyPassword";
 export * from "./addCategory";
 export * from "./modifyCategory";
 export * from "./removeCategory";
+export * from "./getPercentageOfBattery";
 
 export * from "./badRequest";
 export * from "./unauthorized";

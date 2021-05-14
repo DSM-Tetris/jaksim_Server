@@ -1,4 +1,4 @@
-import { ObjectType, Field, createUnionType } from "type-graphql";
+import { ObjectType, Field, createUnionType, ID } from "type-graphql";
 import { Length, MaxLength } from "class-validator";
 import { Tag } from "../../entity";
 import { BadRequest } from "./badRequest";
@@ -23,7 +23,7 @@ export namespace GetPostsResponse {
       this.image = image;
       this.tags = tags;
     }
-  
+
     @Field()
     @Length(1, 45)
     title: string;

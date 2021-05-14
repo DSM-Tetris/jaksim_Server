@@ -7,7 +7,6 @@ import {
   UploadPostResult,
   UploadPostRequest,
   GetPostResult,
-  GetPostRequest,
 } from "../dto";
 import { auth } from "../middleware";
 import { PostService } from "../service";
@@ -44,8 +43,8 @@ export class PostResolver {
   @Query(() => GetPostResult)
   @UseMiddleware(auth)
   async getPost(
-    @Arg("data") @ValidOf(getPostSchema) data: GetPostRequest
+    @Arg("postId") @ValidOf(getPostSchema) postId: number
   ): Promise<typeof GetPostResult> {
-    return await PostService.getPost(data);
+    return await PostService.getPost(postId);
   }
 }

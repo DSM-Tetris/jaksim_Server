@@ -5,15 +5,13 @@ import {
   UploadPostResult,
   GetPostsRequest,
   GetPostsResult,
-  GetPostRequest,
   GetPostResult,
   GetPostsResponse,
   GetPostResponse,
 } from "../dto";
 import { Upload } from "../type";
 import path from "path";
-import { getPostsSchema, getPostSchema } from "../schema";
-import { validateArguments, ImageNameGenerator } from "../util";
+import { ImageNameGenerator } from "../util";
 import { context } from "../context";
 import {
   PostRepository,
@@ -29,7 +27,6 @@ export class PostService {
     categoryId,
   }: GetPostsRequest): Promise<typeof GetPostsResult> {
     const username = context.decoded["username"];
-    await validateArguments({ username, page, categoryId }, getPostsSchema);
 
     const posts = await PostRepository.findTenByUsernameAndCategoryId(
       username,
@@ -55,12 +52,8 @@ export class PostService {
       : new GetPostsResponse.NotFoundAnyPost();
   }
 
-  static async getPost({
-    postId,
-  }: GetPostRequest): Promise<typeof GetPostResult> {
+  static async getPost(postId: number): Promise<typeof GetPostResult> {
     const username = context.decoded["username"];
-
-    await validateArguments({ postId }, getPostSchema);
 
     const post = await PostRepository.findOneByPostId(postId);
     if (!post) {

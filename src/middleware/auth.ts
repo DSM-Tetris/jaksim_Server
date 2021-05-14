@@ -4,16 +4,6 @@ import { context } from "../context";
 import config from "../config";
 import { Unauthorized } from "../dto";
 
-export const auth: MiddlewareFn = async (_, next) => {
-  if (!context.token) {
-    return new Unauthorized();
-  }
-
-  context.decoded = verifyToken(extractBearerToken(context.token));
-
-  return await next();
-};
-
 const extractBearerToken = (bearerToken: string): string => {
   return bearerToken.split("Bearer ")[1];
 };
@@ -24,4 +14,14 @@ const verifyToken = (token: string) => {
   } catch (e) {
     return new Unauthorized();
   }
+};
+
+export const auth: MiddlewareFn = async (_, next) => {
+  if (!context.token) {
+    return new Unauthorized();
+  }
+
+  context.decoded = verifyToken(extractBearerToken(context.token));
+
+  return await next();
 };

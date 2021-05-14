@@ -1,10 +1,19 @@
-import { PostRepository, CategoryRepository, UserRepository } from "../repository";
+import {
+  PostRepository,
+  CategoryRepository,
+  UserRepository,
+} from "../repository";
 import { context } from "../context";
 import {
   GetCategoryListResult,
   GetCategoryListResponse,
   AddCategoryResult,
   AddCategoryResponse,
+  ModifyCategoryResult,
+  ModifyCategoryResponse,
+  ModifyCategoryRequest,
+  RemoveCategoryResult,
+  RemoveCategoryResponse,
 } from "../dto";
 import { Category } from "../entity";
 
@@ -23,6 +32,18 @@ export class CategoryService {
     );
   }
 
+  static async removeCategory(
+    id: number
+  ): Promise<typeof RemoveCategoryResult> {
+    const username: string = context.decoded["username"];
+    const category = await CategoryRepository.findByIdAndUsername(id, username);
+    if (!category) {
+      return new RemoveCategoryResponse.CategoryNotFound();
+    }
+    await CategoryRepository.delete(id);
+    return new RemoveCategoryResponse.RemoveCategory();
+  }
+
   private static getRawCategoryList(posts, categories: Category[]) {
     const result: GetCategoryListResponse.CategoryList[] = [];
     for (const post of posts) {
@@ -36,11 +57,7 @@ export class CategoryService {
         categories.splice(index, 1);
       }
     }
-    result.push({
-      id: null,
-      name: "전체 카테고리",
-      count: this.getNumOfAllPosts(posts),
-    });
+    result.push(this.getWholeCategory(posts));
     return result;
   }
 
@@ -58,6 +75,51 @@ export class CategoryService {
       }
     }
     return -1;
+  }
+
+  static async addCategory(
+    categoryName: string
+  ): Promise<typeof AddCategoryResult> {
+    const username = context.decoded["username"];
+
+    const user = await UserRepository.findByUsername(username);
+    const hasCategory = await CategoryRepository.findByNameAndUsername(
+      categoryName,
+      username
+    );
+
+    if (hasCategory) {
+      return new AddCategoryResponse.CategoryAlreadyExists();
+    }
+
+    await CategoryRepository.saveWithUser(username, user!);
+    return new AddCategoryResponse.AddCategory();
+  }
+
+  static async modifyCategory(
+    data: ModifyCategoryRequest
+  ): Promise<typeof ModifyCategoryResult> {
+    const { id, categoryName } = data;
+    const username = context.decoded["username"];
+
+    const category = await CategoryRepository.findById(id);
+    if (!category) {
+      return new ModifyCategoryResponse.CategoryNotFound();
+    }
+    if (username !== category.username) {
+      return new ModifyCategoryResponse.Forbidden();
+    }
+
+    await CategoryRepository.modifyById(id, categoryName);
+    return new ModifyCategoryResponse.ModifyCategory();
+  }
+
+  private static getWholeCategory(posts): GetCategoryListResponse.CategoryList {
+    return {
+      id: null,
+      name: "전체 카테고리",
+      count: this.getNumOfAllPosts(posts),
+    };
   }
 
   private static getNumOfAllPosts(posts) {

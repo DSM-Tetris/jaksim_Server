@@ -97,14 +97,15 @@ export class UserService {
     return new RefreshResponse.Refresh(regeneratedAccessToken);
   }
 
-  static async modifyPassword(
-    { email, newPassword, authCode }: ModifyPasswordRequest
-  ): Promise<typeof ModifyPasswordResult> {
+  static async modifyPassword({
+    email,
+    newPassword,
+    authCode,
+  }: ModifyPasswordRequest): Promise<typeof ModifyPasswordResult> {
     const user = await UserRepository.findByEmail(email);
     if (!user) {
       return new ModifyPasswordResponse.UserNotExists();
     }
-    
     const verifyResult = await EmailService.verifyAuthCode(
       email,
       authCode

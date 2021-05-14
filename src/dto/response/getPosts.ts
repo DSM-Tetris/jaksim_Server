@@ -13,21 +13,16 @@ export namespace GetPostsResponse {
   @ObjectType()
   export class PostPreview {
     constructor(
-      id: number,
       title: string,
       contentPreview: string | null,
       image: string,
       tags: Tag[]
     ) {
-      this.id = id;
       this.title = title;
       this.contentPreview = contentPreview;
       this.image = image;
       this.tags = tags;
     }
-    
-    @Field(type => ID)
-    readonly id: number;
 
     @Field()
     @Length(1, 45)

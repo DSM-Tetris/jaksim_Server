@@ -41,6 +41,9 @@ export const GetCategoryListResult = createUnionType({
       case Unauthorized.getMessage(): {
         return Unauthorized;
       }
+      default: {
+        return undefined;
+      }
     }
   }
 });

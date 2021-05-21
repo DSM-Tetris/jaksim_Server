@@ -14,6 +14,7 @@ import {
   ModifyCategoryRequest,
   RemoveCategoryResult,
   RemoveCategoryResponse,
+  CategoryNotFound,
 } from "../dto";
 import { Category } from "../entity";
 
@@ -38,7 +39,7 @@ export class CategoryService {
     const username: string = context.decoded["username"];
     const category = await CategoryRepository.findByIdAndUsername(id, username);
     if (!category) {
-      return new RemoveCategoryResponse.CategoryNotFound();
+      return new CategoryNotFound();
     }
     await CategoryRepository.delete(id);
     return new RemoveCategoryResponse.RemoveCategory();
@@ -104,7 +105,7 @@ export class CategoryService {
 
     const category = await CategoryRepository.findById(id);
     if (!category) {
-      return new ModifyCategoryResponse.CategoryNotFound();
+      return new CategoryNotFound();
     }
     if (username !== category.username) {
       return new ModifyCategoryResponse.Forbidden();

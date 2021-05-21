@@ -8,6 +8,7 @@ import {
   GetPostResult,
   GetPostsResponse,
   GetPostResponse,
+  CategoryNotFound,
 } from "../dto";
 import { Upload } from "../type";
 import path from "path";
@@ -77,7 +78,7 @@ export class PostService {
 
     const category = await CategoryRepository.findById(data.categoryId);
     if (!category || category?.username !== username) {
-      return new UploadPostResponse.CategoryNotFound();
+      return new CategoryNotFound();
     }
 
     const imageName = await this.uploadImage(file);

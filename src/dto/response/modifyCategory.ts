@@ -1,10 +1,10 @@
 import { ObjectType, Field, createUnionType } from "type-graphql";
 import { BadRequest } from "./badRequest";
 import { Unauthorized } from "./unauthorized";
+import { CategoryNotFound } from "./categoryNotFound";
 
 enum ModifyCategoryMessage {
   ModifyCategorySuccess = "MODIFY CATEGORY SUCCESS",
-  CategoryNotFound = "CATEGORY NOT FOUND",
   Forbidden = "FORBIDDEN",
 }
 
@@ -20,16 +20,6 @@ export namespace ModifyCategoryResponse {
   }
 
   @ObjectType()
-  export class CategoryNotFound {
-    constructor() {
-      this.message = ModifyCategoryMessage.CategoryNotFound;
-    }
-    
-    @Field()
-    message: string;
-  }
-
-  @ObjectType()
   export class Forbidden {
     constructor() {
       this.message = ModifyCategoryMessage.Forbidden;
@@ -40,7 +30,7 @@ export namespace ModifyCategoryResponse {
   }
 }
 
-const { ModifyCategory, CategoryNotFound, Forbidden } = ModifyCategoryResponse;
+const { ModifyCategory, Forbidden } = ModifyCategoryResponse;
 
 export const ModifyCategoryResult = createUnionType({
   name: "ModifyCategoryResult",
@@ -50,7 +40,7 @@ export const ModifyCategoryResult = createUnionType({
       case ModifyCategoryMessage.ModifyCategorySuccess: {
         return ModifyCategory;
       }
-      case ModifyCategoryMessage.CategoryNotFound: {
+      case CategoryNotFound.getMessage(): {
         return CategoryNotFound;
       }
       case ModifyCategoryMessage.Forbidden: {

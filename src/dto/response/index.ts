@@ -15,3 +15,4 @@ export * from "./getPercentageOfBattery";
 
 export * from "./badRequest";
 export * from "./unauthorized";
+export * from "./categoryNotFound";

@@ -1,9 +1,9 @@
 import { createUnionType, Field, ObjectType } from "type-graphql";
 import { BadRequest } from "./badRequest";
+import { CategoryNotFound } from "./categoryNotFound";
 
 enum RemoveCategoryMessage {
   SuccessRemoveCategory = "SUCCESS REMOVE CATEGORY",
-  CategoryNotFound = "CATEGORY NOT FOUND",
 }
 
 export namespace RemoveCategoryResponse {
@@ -16,19 +16,9 @@ export namespace RemoveCategoryResponse {
     @Field()
     message: string;
   }
-
-  @ObjectType()
-  export class CategoryNotFound {
-    constructor() {
-      this.message = RemoveCategoryMessage.CategoryNotFound;
-    }
-
-    @Field()
-    message: string;
-  }
 }
 
-const { RemoveCategory, CategoryNotFound } = RemoveCategoryResponse;
+const { RemoveCategory } = RemoveCategoryResponse;
 
 export const RemoveCategoryResult = createUnionType({
   name: "RemoveCategoryResult",
@@ -41,7 +31,7 @@ export const RemoveCategoryResult = createUnionType({
       case RemoveCategoryMessage.SuccessRemoveCategory: {
         return RemoveCategory;
       }
-      case RemoveCategoryMessage.CategoryNotFound: {
+      case CategoryNotFound.getMessage(): {
         return CategoryNotFound;
       }
       default: {

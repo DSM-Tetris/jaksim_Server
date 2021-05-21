@@ -1,12 +1,12 @@
 import "reflect-metadata";
-import { UserService } from "../../src/service";
-import { LoginRequest } from "../../src/dto";
+import { PasswordService, UserService } from "../../src/service";
 import {
   LogRepository,
   TokenRepository,
   UserRepository,
 } from "../../src/repository";
 import { JwtGenerator } from "../../src/util";
+import { LoginResponse } from "../../src/dto";
 
 describe("user service test", () => {
   test("login success", async () => {
@@ -22,12 +22,9 @@ describe("user service test", () => {
     JwtGenerator.refreshToken = jest.fn().mockReturnValue("refresh-token");
     TokenRepository.saveRefreshToken = jest.fn().mockResolvedValue(null);
     LogRepository.save = jest.fn().mockResolvedValue(null);
+    PasswordService.match = jest.fn().mockResolvedValue(true);
 
     const result = await UserService.login(dto);
-    expect(result).toBe({
-      accessToken: "access-token",
-      refreshToken: "refresh-token",
-      message: "LOGIN SUCCESSFULLY COMPLETE",
-    });
+    expect(result).toBeInstanceOf(LoginResponse.Login);
   });
 });

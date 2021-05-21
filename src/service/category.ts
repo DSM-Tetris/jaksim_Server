@@ -125,18 +125,4 @@ export class CategoryService {
   private static getNumOfAllPosts(posts) {
     return posts.reduce((prev, post) => prev + post.count, 0);
   }
-
-  static async addCategory(categoryName: string): Promise<typeof AddCategoryResult> {
-    const username = context.decoded["username"];
-
-    const user = await UserRepository.findByUsername(username);
-    const hasCategory = await CategoryRepository.findByNameAndUsername(categoryName, username);
-
-    if (hasCategory) {
-      return new AddCategoryResponse.CategoryAlreadyExists();
-    }
-
-    await CategoryRepository.saveWithUser(username, user!);
-    return new AddCategoryResponse.AddCategory();
-  }
 }

@@ -17,6 +17,7 @@ export namespace RemoveCategoryResponse {
     message: string;
   }
 
+  @ObjectType()
   export class CategoryNotFound {
     constructor() {
       this.message = RemoveCategoryMessage.CategoryNotFound;

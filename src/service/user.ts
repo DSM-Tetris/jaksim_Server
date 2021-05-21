@@ -19,17 +19,12 @@ import {
   JwtGenerator,
   JwtPayload,
   JwtValidator,
-  validateArguments,
 } from "../util";
 import { LogFactory, LoginLogFactory } from "../entity";
 import { EmailService } from "./email";
-import { loginSchema, signupSchema, modifyPasswordSchema } from "../schema";
-import { Validate, ValidOf } from "../decorator/validateArguments";
 
 export class UserService {
   static async signup(data: SignupRequest): Promise<typeof SignupResult> {
-    await validateArguments(data, signupSchema);
-
     const user = await UserRepository.findByEmail(data.email);
     if (user) {
       return new SignupResponse.AlreadyUserExists();
@@ -49,9 +44,7 @@ export class UserService {
     return new SignupResponse.SuccessSignup();
   }
 
-  @Validate
-  static async login(
-    @ValidOf(loginSchema) { username, password }: LoginRequest
+  static async login({ username, password }: LoginRequest
   ): Promise<typeof LoginResult> {
     const user = await UserRepository.findByUsername(username);
     if (!user) {
@@ -104,14 +97,15 @@ export class UserService {
     return new RefreshResponse.Refresh(regeneratedAccessToken);
   }
 
-  static async modifyPassword(
-    { email, newPassword, authCode }: ModifyPasswordRequest
-  ): Promise<typeof ModifyPasswordResult> {
+  static async modifyPassword({
+    email,
+    newPassword,
+    authCode,
+  }: ModifyPasswordRequest): Promise<typeof ModifyPasswordResult> {
     const user = await UserRepository.findByEmail(email);
     if (!user) {
       return new ModifyPasswordResponse.UserNotExists();
     }
-    
     const verifyResult = await EmailService.verifyAuthCode(
       email,
       authCode

@@ -2,7 +2,9 @@
   "compilerOptions": {
     "target": "ES2019",
     "module": "commonJS",
-    "lib": ["ES6"],
+    "lib": [
+      "ES6"
+    ],
     "outDir": "dist",
     "strictPropertyInitialization": true,
     "strictNullChecks": true,

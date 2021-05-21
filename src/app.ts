@@ -15,6 +15,7 @@ export const app = async () => {
   new ApolloServer({
     schema,
     context: ({ req }) => {
+      console.log(req.headers);
       context.token = req.headers.authorization || "";
       return context;
     },

@@ -10,6 +10,7 @@ describe("password service test", () => {
       );
 
       expect(encryptedPassword).not.toBe(rawPassword);
+      expect(encryptedPassword.length).toBe(60);
     });
   });
 });

@@ -36,14 +36,21 @@ export const AddCategoryResult = createUnionType({
   types: () => [AddCategory, CategoryAlreadyExists, BadRequest, Unauthorized] as const,
   resolveType: args => {
     switch (args.message) {
-      case AddCategoryMessage.AddCategorySuccess:
+      case AddCategoryMessage.AddCategorySuccess: {
         return AddCategory;
-      case AddCategoryMessage.CategoryAlreadyExists:
+      }
+      case AddCategoryMessage.CategoryAlreadyExists: {
         return CategoryAlreadyExists;
-      case BadRequest.getMessage():
+      }
+      case BadRequest.getMessage(): {
         return BadRequest;
-      case Unauthorized.getMessage():
+      }
+      case Unauthorized.getMessage(): {
         return Unauthorized;
+      }
+      default: {
+        return undefined;
+      }
     }
   },
 });

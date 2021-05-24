@@ -10,7 +10,7 @@ export class Post {
     content: string,
     image: string,
     username: string,
-    categoryId: number
+    categoryId: number | null,
   ) {
     this.title = title;
     this.content = content;
@@ -26,8 +26,8 @@ export class Post {
   @Field()
   title!: string;
 
-  @Field((type) => String, { nullable: true })
-  content!: string | null;
+  @Field()
+  content!: string;
 
   @Field()
   image!: string;

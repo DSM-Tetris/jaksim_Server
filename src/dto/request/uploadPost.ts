@@ -8,9 +8,9 @@ export class UploadPostRequest {
   @Length(1, 30)
   title!: string;
 
-  @Field(type => String, { nullable: true })
+  @Field()
   @Length(1, 300)
-  content!: string | null;
+  content!: string;
 
   @Field(type => Int, { nullable: true })
   categoryId!: number;

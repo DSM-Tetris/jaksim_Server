@@ -7,7 +7,7 @@ import { Tag } from "./tag";
 export class Post {
   constructor(
     title: string,
-    content: string | null,
+    content: string,
     image: string,
     username: string,
     categoryId: number | null,
@@ -26,8 +26,8 @@ export class Post {
   @Field()
   title!: string;
 
-  @Field((type) => String, { nullable: true })
-  content!: string | null;
+  @Field()
+  content!: string;
 
   @Field()
   image!: string;

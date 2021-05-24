@@ -7,10 +7,10 @@ import { Tag } from "./tag";
 export class Post {
   constructor(
     title: string,
-    content: string,
+    content: string | null,
     image: string,
     username: string,
-    categoryId: number
+    categoryId: number | null,
   ) {
     this.title = title;
     this.content = content;

@@ -47,7 +47,6 @@ describe("user service test", () => {
 
   test("login fail - wrong password", async () => {
     const dto = { username: "dkssud9556", password: "@Password1" };
-    const spy = jest.spyOn(UserRepository, "findByUsername");
 
     UserRepository.findByUsername = jest.fn().mockResolvedValue({
       username: "dkssud9556",
@@ -60,7 +59,6 @@ describe("user service test", () => {
     UserService.login(dto)
       .then((result) => {
         expect(result).toBeInstanceOf(LoginResponse.InvalidLoginInfo);
-        expect(spy).toBeCalledTimes(1);
       })
       .catch((err) => fail(err));
   });

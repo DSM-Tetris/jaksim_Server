@@ -26,8 +26,8 @@ export class Post {
   @Field()
   title!: string;
 
-  @Field()
-  content!: string;
+  @Field(type => String, { nullable: true })
+  content!: string | null;
 
   @Field()
   image!: string;

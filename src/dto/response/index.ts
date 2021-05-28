@@ -12,6 +12,7 @@ export * from "./addCategory";
 export * from "./modifyCategory";
 export * from "./removeCategory";
 export * from "./getPercentageOfBattery";
+export * from "./getGreenStatus";
 
 export * from "./badRequest";
 export * from "./unauthorized";

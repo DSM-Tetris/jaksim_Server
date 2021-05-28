@@ -1,5 +1,5 @@
 import moment from "moment";
-import { Log } from "../entity";
+import { Log, LogType } from "../entity";
 import { context } from "../context";
 
 export class LogRepository {
@@ -23,9 +23,28 @@ export class LogRepository {
           gte: new Date(thisMonth).toISOString(),
           lt: new Date(nextMonth).toISOString(),
         },
-        username
+        username,
       },
       distinct: ["date", "type"],
+    });
+  }
+
+  static findByUsername(username: string) {
+    const midnight = new Date();
+    midnight.setHours(0, 0, 0, 0);
+    const lastTime = new Date();
+    lastTime.setHours(23, 59, 59);
+    return context.prisma.log.findFirst({
+      where: {
+        AND: {
+          date: {
+            gte: midnight,
+            lte: lastTime,
+          },
+          username,
+          type: LogType.POSTING,
+        },
+      },
     });
   }
 }

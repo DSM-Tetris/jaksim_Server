@@ -41,6 +41,7 @@ export class PostService {
       const tags = await TagRepository.findByPostId(post.id);
       response.push(
         new GetPostsResponse.PostPreview(
+          post.id,
           post.title,
           post.content ? post.content.slice(0, 100) : null,
           post.image,
@@ -76,7 +77,7 @@ export class PostService {
     file: Upload | null
   ): Promise<typeof UploadPostResult> {
     const username = context.decoded["username"];
-    console.log(context.decoded);
+
     if (data.categoryId) {
       const category = await CategoryRepository.findById(data.categoryId);
       if (!category || category?.username !== username) {
@@ -98,9 +99,7 @@ export class PostService {
         data.tagNames
       );
     } else {
-      await PostRepository.saveWithTags(
-        data.toPostEntity(username, imageName)
-      );
+      await PostRepository.saveWithTags(data.toPostEntity(username, imageName));
     }
     return new UploadPostResponse.UploadPost();
   }

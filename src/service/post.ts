@@ -97,6 +97,10 @@ export class PostService {
         data.toPostEntity(username, imageName),
         data.tagNames
       );
+    } else {
+      await PostRepository.saveWithTags(
+        data.toPostEntity(username, imageName)
+      );
     }
     return new UploadPostResponse.UploadPost();
   }

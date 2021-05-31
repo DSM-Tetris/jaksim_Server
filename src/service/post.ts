@@ -9,6 +9,7 @@ import {
   GetPostsResponse,
   GetPostResponse,
   CategoryNotFound,
+  BadRequest,
 } from "../dto";
 import { Upload } from "../type";
 import path from "path";
@@ -72,16 +73,22 @@ export class PostService {
 
   static async uploadPost(
     data: UploadPostRequest,
-    file: Upload
+    file: Upload | null
   ): Promise<typeof UploadPostResult> {
     const username = context.decoded["username"];
-
-    const category = await CategoryRepository.findById(data.categoryId);
-    if (!category || category?.username !== username) {
-      return new CategoryNotFound();
+    console.log(context.decoded);
+    if (data.categoryId) {
+      const category = await CategoryRepository.findById(data.categoryId);
+      if (!category || category?.username !== username) {
+        return new CategoryNotFound();
+      }
     }
 
-    const imageName = await this.uploadImage(file);
+    let imageName = "";
+
+    if (file) {
+      imageName = await this.uploadImage(file);
+    }
 
     await this.savePostingLog(username);
 

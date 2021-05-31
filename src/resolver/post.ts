@@ -32,9 +32,12 @@ export class PostResolver {
 
   @Validate
   @Mutation(() => UploadPostResult)
+  @UseMiddleware(auth)
   async uploadPost(
     @Arg("data") @ValidOf(uploadPostSchema) data: UploadPostRequest,
-    @Arg("picture", () => GraphQLUpload) @ValidOf(pictureSchema) file: Upload
+    @Arg("picture", () => GraphQLUpload, { nullable: true })
+    @ValidOf(pictureSchema)
+    file: Upload | null
   ): Promise<typeof UploadPostResult> {
     return await PostService.uploadPost(data, file);
   }

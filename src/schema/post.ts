@@ -14,10 +14,12 @@ export const uploadPostSchema = Joi.object().keys({
   tagNames: Joi.array().length(10).optional(),
 });
 
-export const pictureSchema = Joi.object().keys({
-  filename: Joi.string().required(),
-  mimetype: Joi.string()
-    .regex(/^image/)
-    .required(),
-  encoding: Joi.string().required(),
-});
+export const pictureSchema = Joi.object()
+  .keys({
+    filename: Joi.string().required(),
+    mimetype: Joi.string()
+      .regex(/^image/)
+      .required(),
+    encoding: Joi.string().required(),
+  })
+  .optional();

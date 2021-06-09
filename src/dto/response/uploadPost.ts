@@ -1,6 +1,7 @@
 import { createUnionType, Field, ObjectType } from "type-graphql";
 import { BadRequest } from "./badRequest";
 import { CategoryNotFound } from "./categoryNotFound";
+import { Unauthorized } from "./unauthorized";
 
 enum UploadPostMessage {
   SuccessUploadPost = "SUCCESS UPLOAD POST",
@@ -22,7 +23,8 @@ const { UploadPost } = UploadPostResponse;
 
 export const UploadPostResult = createUnionType({
   name: "UploadPostResult",
-  types: () => [UploadPost, BadRequest, CategoryNotFound] as const,
+  types: () =>
+    [UploadPost, BadRequest, CategoryNotFound, Unauthorized] as const,
   resolveType: (args) => {
     switch (args.message) {
       case UploadPostMessage.SuccessUploadPost: {
@@ -33,6 +35,9 @@ export const UploadPostResult = createUnionType({
       }
       case BadRequest.getMessage(): {
         return BadRequest;
+      }
+      case Unauthorized.getMessage(): {
+        return Unauthorized;
       }
       default: {
         return undefined;
